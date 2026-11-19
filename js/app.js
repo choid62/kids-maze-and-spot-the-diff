@@ -1,7 +1,7 @@
 // 화면 전환, 홈, 축하, 스티커 북, 부모 설정
 (function (root) {
   const $ = (id) => document.getElementById(id);
-  const SCREENS = ['home', 'maze', 'spot', 'chop', 'coco', 'stickers'];
+  const SCREENS = ['home', 'maze', 'spot', 'hidden', 'memo', 'pattern', 'chop', 'coco', 'stickers'];
   // [화면 글자, 영어 목소리]
   const CHEERS = [['잘했어!', 'Good job!'], ['최고야!', 'Awesome!'], ['대단해!', 'Amazing!'], ['멋져!', 'Great!'], ['해냈다!', 'You did it!']];
   const STICKER_KINDS = Object.keys(EMOJI);
@@ -26,6 +26,9 @@
     if (current === 'spot' && name !== 'spot') SpotGame.stop();
     if (current === 'chop' && name !== 'chop') ChopGame.stop();
     if (current === 'coco' && name !== 'coco') CocoGame.stop();
+    if (current === 'memo' && name !== 'memo') MemoGame.stop();
+    if (current === 'hidden' && name !== 'hidden') HiddenGame.stop();
+    if (current === 'pattern' && name !== 'pattern') PatternGame.stop();
     hide('celebrate');
     hide('levels');
     for (const s of SCREENS) $('screen-' + s).classList.toggle('active', s === name);
@@ -35,6 +38,9 @@
     if (name === 'maze') MazeGame.start(opts);
     else if (name === 'chop') ChopGame.enter(opts);
     else if (name === 'coco') CocoGame.enter(opts);
+    else if (name === 'memo') MemoGame.enter(opts);
+    else if (name === 'hidden') HiddenGame.start(opts);
+    else if (name === 'pattern') PatternGame.start(opts);
     else if (name === 'spot') SpotGame.start(opts);
     else if (name === 'stickers') renderStickers();
     else renderHome();
@@ -64,10 +70,16 @@
     $('star-count').textContent = Store.get('stickers').length;
     $('home-maze-level').textContent = '레벨 ' + Store.get('mazeLevel');
     $('home-spot-level').textContent = '레벨 ' + Store.get('spotLevel');
+    $('home-hidden-level').textContent = '레벨 ' + Store.get('hiddenLevel');
+    $('home-memo-level').textContent = '레벨 ' + Store.get('memoLevel');
+    $('home-pattern-level').textContent = '레벨 ' + Store.get('patternLevel');
     $('chop-art').innerHTML = ChopGame.handSVG(2, true) + ChopGame.handSVG(3, false);
     document.querySelectorAll('canvas.btn-art').forEach((c) => {
       const { ctx, w, h } = sizeCanvas(c);
       if (c.dataset.art === 'maze') drawMazeArt(ctx, w, h);
+      else if (c.dataset.art === 'memo') drawMemoArt(ctx, w, h);
+      else if (c.dataset.art === 'hidden') drawHiddenArt(ctx, w, h);
+      else if (c.dataset.art === 'pattern') drawPatternArt(ctx, w, h);
       else if (c.dataset.art === 'coco') Draw.object(ctx, 'coconut', w / 2, h / 2, w * 0.72, null, false, { recolor: { '#D3D3D3': '#FFFFFF', '#9B9B9B': '#FFF6E6' } });
       else drawSpotArt(ctx, w, h);
     });
@@ -90,6 +102,55 @@
     ctx.stroke();
     Draw.object(ctx, 'rabbit_face', pad + cell * 0.5, pad + cell * 0.5, cell * 0.85);
     Draw.object(ctx, 'carrot', pad + cell * 3.5, pad + cell * 3.5, cell * 0.8);
+  }
+
+  // 짝 맞추기: 뒤집힌 카드 하나와 그림 카드 하나
+  function drawMemoArt(ctx, w, h) {
+    const cw = w * 0.36, ch = h * 0.5, y = (h - ch) / 2;
+    ctx.fillStyle = '#FF9F5A';
+    Draw.rrect(ctx, w * 0.1, y, cw, ch, 8);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold ' + Math.round(cw * 0.5) + 'px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('?', w * 0.1 + cw / 2, h / 2);
+    ctx.fillStyle = '#FFF4E6';
+    ctx.strokeStyle = '#FF9F5A';
+    ctx.lineWidth = 3;
+    Draw.rrect(ctx, w * 0.54, y, cw, ch, 8);
+    ctx.fill();
+    ctx.stroke();
+    Draw.object(ctx, 'cat', w * 0.54 + cw / 2, h / 2, cw * 0.8);
+  }
+
+  // 숨은그림: 돋보기 너머의 무당벌레
+  function drawHiddenArt(ctx, w, h) {
+    Draw.object(ctx, 'lady_beetle', w * 0.42, h * 0.42, w * 0.38);
+    ctx.strokeStyle = '#4a3b35';
+    ctx.lineWidth = w * 0.06;
+    ctx.beginPath();
+    ctx.arc(w * 0.42, h * 0.42, w * 0.26, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.lineCap = 'round';
+    ctx.lineWidth = w * 0.1;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.61, h * 0.61);
+    ctx.lineTo(w * 0.82, h * 0.82);
+    ctx.stroke();
+  }
+
+  // 다음은?: 사과 바나나 사과 ?
+  function drawPatternArt(ctx, w, h) {
+    const s = w * 0.26;
+    Draw.object(ctx, 'red_apple', w * 0.2, h * 0.36, s);
+    Draw.object(ctx, 'banana', w * 0.5, h * 0.36, s);
+    Draw.object(ctx, 'red_apple', w * 0.8, h * 0.36, s);
+    ctx.fillStyle = '#9B6BD6';
+    ctx.font = 'bold ' + Math.round(h * 0.34) + 'px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('?', w * 0.5, h * 0.76);
   }
 
   function drawSpotArt(ctx, w, h) {
@@ -179,11 +240,21 @@
   const TIERS = [[3, '쉬움', 't1'], [6, '보통', 't2'], [8, '어려움', 't3'], [10, '아주 어려움', 't4'], [15, '최고', 't5']];
   const tierOf = (lv) => TIERS.find((t) => lv <= t[0]);
 
+  // 레벨이 있는 놀이: 저장 이름, 최고 레벨, 이름, 레벨을 고른 뒤 할 일
+  const LEVEL_GAMES = {
+    maze: { key: 'mazeLevel', max: () => MazeGame.MAX_LEVEL, name: '미로', go: () => MazeGame.start({}) },
+    spot: { key: 'spotLevel', max: () => SpotGame.MAX_LEVEL, name: '틀린그림', go: () => SpotGame.start({}) },
+    hidden: { key: 'hiddenLevel', max: () => Hidden.MAX_LEVEL, name: '숨은그림', go: () => HiddenGame.start({}) },
+    memo: { key: 'memoLevel', max: () => Memory.MAX_LEVEL, name: '짝 맞추기', go: () => MemoGame.startSolo() },
+    pattern: { key: 'patternLevel', max: () => Pattern.MAX_LEVEL, name: '다음은?', go: () => PatternGame.start({}) },
+  };
+
   function openLevels(game) {
-    const key = game === 'maze' ? 'mazeLevel' : 'spotLevel';
-    const max = game === 'maze' ? MazeGame.MAX_LEVEL : SpotGame.MAX_LEVEL;
+    const info = LEVEL_GAMES[game];
+    const key = info.key;
+    const max = info.max();
     const now = Store.get(key);
-    $('levels-title').textContent = (game === 'maze' ? '미로' : '틀린그림') + ' 레벨 고르기';
+    $('levels-title').textContent = info.name + ' 레벨 고르기';
     const grid = $('level-grid');
     grid.innerHTML = '';
     for (let lv = 1; lv <= max; lv++) {
@@ -194,7 +265,7 @@
         Store.set(key, lv);
         hide('levels');
         Sound.tap();
-        if (game === 'maze') MazeGame.start({}); else SpotGame.start({});
+        info.go();
       });
       grid.appendChild(btn);
     }
@@ -203,6 +274,8 @@
       .map((t) => `<span class="chip ${t[2]}">${t[1]}</span>`).join('');
     open('levels');
   }
+
+  root.App = { openLevels };
 
   // ---------- 부모 잠금 + 설정 ----------
   function openGate() {
@@ -274,6 +347,9 @@
     MazeGame.init(celebrate);
     ChopGame.init(celebrate);
     CocoGame.init(celebrate);
+    MemoGame.init(celebrate);
+    HiddenGame.init(celebrate);
+    PatternGame.init(celebrate);
     SpotGame.init(celebrate);
     bindSettings();
 
@@ -291,6 +367,9 @@
       if ($('celebrate').dataset.game === 'maze') MazeGame.start({});
       else if ($('celebrate').dataset.game === 'chop') ChopGame.restart();
       else if ($('celebrate').dataset.game === 'coco') CocoGame.restart();
+      else if ($('celebrate').dataset.game === 'memo') MemoGame.restart();
+      else if ($('celebrate').dataset.game === 'hidden') HiddenGame.start({});
+      else if ($('celebrate').dataset.game === 'pattern') PatternGame.start({});
       else SpotGame.start({});
     });
 
@@ -309,7 +388,7 @@
 
     // 점검용: ?demo=picker 는 레벨 고르기 창을 열고, ?demo=pick12 는 레벨 12를 누른다
     const demo = q.get('demo') || '';
-    if ((demo === 'picker' || demo.startsWith('pick')) && (route() === 'maze' || route() === 'spot')) {
+    if ((demo === 'picker' || demo.startsWith('pick')) && LEVEL_GAMES[route()]) {
       openLevels(route());
       const n = Number(demo.slice(4));
       if (n) $('level-grid').children[n - 1].click();

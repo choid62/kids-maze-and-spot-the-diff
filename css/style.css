@@ -330,3 +330,62 @@ button.level-pill { border: none; font-family: inherit; color: var(--ink); curso
 .coco-table .coco-word { font-size: 19px; }
 .coco-table .coco-word.big { font-size: 38px; }
 .coco-table .coco-center { width: 40%; }
+
+/* ===== 홈: 놀이 7개를 2열 타일로 ===== */
+#screen-home { justify-content: flex-start; padding-top: calc(env(safe-area-inset-top) + 28px); padding-bottom: 24px; }
+.home-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: min(100%, 440px); flex-direction: unset; }
+@media (min-width: 700px) { .home-buttons { grid-template-columns: repeat(3, 1fr); width: min(100%, 680px); } }
+.tile {
+  border: none; border-radius: 24px; padding: 12px 8px 10px; color: #fff; font-family: inherit;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.13); text-shadow: 0 2px 0 rgba(0, 0, 0, 0.12);
+}
+.tile:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.13); }
+.tile .btn-art { width: 84px; height: 84px; border-radius: 18px; background: #fff; }
+.tile .t-name { font-size: 22px; font-weight: 900; margin-top: 4px; }
+.tile small { font-size: 14px; font-weight: 800; opacity: 0.9; min-height: 1em; }
+.tile.maze { background: var(--maze); }
+.tile.spot { background: var(--spot); }
+.tile.hidden-t { background: #E86FA3; }
+.tile.memo { background: #FF9F5A; }
+.tile.pattern { background: #9B6BD6; }
+.tile.chop { background: #F2B33D; }
+.tile.coco { background: #B98A5E; }
+.big-btn.memo { background: #FF9F5A; }
+
+/* ===== 짝 맞추기 ===== */
+.memo-play { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 0 8px 10px; }
+.memo-score { display: flex; justify-content: center; align-items: center; gap: 12px; font-size: 24px; font-weight: 900; margin-bottom: 6px; }
+.memo-score span { padding: 4px 14px; border-radius: 999px; }
+.memo-score span.turn { background: #FFE0B8; }
+.memo-board { flex: 1; display: grid; gap: 10px; justify-content: center; align-content: center; min-height: 0; }
+.memo-board .card { border: none; padding: 0; background: transparent; perspective: 600px; box-shadow: none; animation: none; max-width: none; border-radius: 0; text-align: initial; }
+.memo-board .card .inner { position: relative; width: 100%; height: 100%; transition: transform 0.35s; transform-style: preserve-3d; }
+.memo-board .card.open .inner, .memo-board .card.matched .inner { transform: rotateY(180deg); }
+.memo-board .card .back, .memo-board .card .front { position: absolute; inset: 0; border-radius: 14px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.12); }
+.memo-board .card .back { background: repeating-linear-gradient(45deg, #FF9F5A 0 10px, #FFB27A 10px 20px); color: #fff; font-size: 26px; }
+.memo-board .card .front { background: #fff; transform: rotateY(180deg); border: 3px solid #FFE0B8; }
+.memo-board .card .front canvas { width: 100%; height: 100%; }
+.memo-board .card.matched .front { border-color: #6CC35B; }
+/* 맞힌 카드는 그림만 톡 튄다 (앞면 자체에 걸면 뒤집힌 상태가 풀린다) */
+.memo-board .card.matched .front canvas { animation: hand-pop 0.4s ease-out; }
+
+/* ===== 숨은그림 ===== */
+.targets { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.targets .target { display: flex; align-items: center; gap: 2px; background: #fff; border-radius: 999px; padding: 2px 10px 2px 4px; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08); }
+.targets .target canvas { width: 34px; height: 34px; }
+.targets .target b { font-size: 16px; }
+.targets .target.done { background: #DFF5DA; }
+.targets .target.done b { color: #3C9A2E; }
+
+/* ===== 다음은? ===== */
+.pattern-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 8px 12px 20px; min-height: 0; }
+.pattern-ask { margin: 0; font-size: 22px; font-weight: 900; color: #9B6BD6; }
+.pattern-seq { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; width: 100%; max-width: 640px; }
+.pattern-seq .cell { background: #fff; border-radius: 18px; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08); }
+.pattern-seq .cell.blank { border: 4px dashed #9B6BD6; background: #F4ECFF; font-size: 40px; font-weight: 900; color: #9B6BD6; }
+.pattern-seq .cell.filled { background: #DFF5DA; animation: hand-pop 0.4s ease-out; }
+.pattern-opts { display: flex; gap: 16px; justify-content: center; }
+.pattern-opts .opt { border: none; border-radius: 22px; background: #fff; box-shadow: 0 5px 0 rgba(0, 0, 0, 0.12); display: flex; align-items: center; justify-content: center; padding: 0; }
+.pattern-opts .opt:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.12); }
+.pattern-opts .opt.right { background: #DFF5DA; }

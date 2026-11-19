@@ -20,10 +20,14 @@
       <button class="corner-btn" id="btn-settings" aria-label="부모 설정">⚙️</button>
       <h1 class="title">뭐 하고 놀까?</h1>
       <div class="home-buttons">
-        <button class="big-btn maze" data-go="maze"><canvas class="btn-art" data-art="maze"></canvas><span class="btn-label">미로<small id="home-maze-level"></small></span></button>
-        <button class="big-btn chop" data-go="chop"><div class="btn-art hands-art" id="chop-art"></div><span class="btn-label">젓가락<small>손가락 놀이</small></span></button>
-        <button class="big-btn coco" data-go="coco"><canvas class="btn-art" data-art="coco"></canvas><span class="btn-label">코코넛<small>크랙 놀이</small></span></button>
-        <button class="big-btn spot" data-go="spot"><canvas class="btn-art" data-art="spot"></canvas><span class="btn-label">틀린그림<small id="home-spot-level"></small></span></button>
+        <button class="tile maze" data-go="maze"><canvas class="btn-art" data-art="maze"></canvas><span class="t-name">미로</span><small id="home-maze-level"></small></button>
+        <button class="tile spot" data-go="spot"><canvas class="btn-art" data-art="spot"></canvas><span class="t-name">틀린그림</span><small id="home-spot-level"></small></button>
+        <!-- 숨은그림: 더 보강할 때까지 홈에서 숨김 (화면과 코드는 그대로, 주소 #hidden 으로는 들어갈 수 있음) -->
+        <button class="tile hidden-t hidden" data-go="hidden"><canvas class="btn-art" data-art="hidden"></canvas><span class="t-name">숨은그림</span><small id="home-hidden-level"></small></button>
+        <button class="tile memo" data-go="memo"><canvas class="btn-art" data-art="memo"></canvas><span class="t-name">짝 맞추기</span><small id="home-memo-level"></small></button>
+        <button class="tile pattern" data-go="pattern"><canvas class="btn-art" data-art="pattern"></canvas><span class="t-name">다음은?</span><small id="home-pattern-level"></small></button>
+        <button class="tile chop" data-go="chop"><div class="btn-art hands-art" id="chop-art"></div><span class="t-name">젓가락</span><small>손가락 놀이</small></button>
+        <button class="tile coco" data-go="coco"><canvas class="btn-art" data-art="coco"></canvas><span class="t-name">코코넛</span><small>크랙 놀이</small></button>
       </div>
       <button class="sticker-btn" data-go="stickers">⭐ <span id="star-count">0</span></button>
     </section>
@@ -41,7 +45,7 @@
       <header class="bar">
         <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
         <div class="bar-mid col"><button class="level-pill" id="spot-level" data-pick="spot" aria-label="레벨 고르기"></button><div class="dots" id="spot-dots"></div></div>
-        <button class="round-btn" id="spot-hint" aria-label="힌트">💡</button>
+        <span class="spacer"></span>
       </header>
       <div class="stage"><canvas id="spot-canvas"></canvas></div>
     </section>
@@ -103,6 +107,49 @@
             <button class="merge-btn hidden" id="coco-merge">🥥 합치기</button>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="screen-memo" class="screen">
+      <header class="bar">
+        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
+        <div class="bar-mid"><button class="level-pill" id="memo-mode">짝 맞추기</button></div>
+        <button class="round-btn" id="memo-new" aria-label="새 판">🔄</button>
+      </header>
+      <div class="chop-menu" id="memo-menu">
+        <button class="big-btn memo mode" id="memo-solo">🃏 혼자 하기</button>
+        <button class="level-pill" id="memo-level" data-pick="memo">혼자: 레벨 1 ▾</button>
+        <button class="big-btn spot mode" id="memo-bot">🤖 로봇이랑</button>
+        <div class="chop-levels" id="memo-levels">
+          <button data-lv="1">쉬움</button><button data-lv="2">보통</button><button data-lv="3">어려움</button>
+        </div>
+        <p class="chop-rules">카드를 두 장씩 뒤집어 같은 그림을 찾아요.<br>짝을 맞히면 한 번 더! 로봇은 본 카드를 기억해요.</p>
+      </div>
+      <div class="memo-play hidden" id="memo-play">
+        <div class="memo-score hidden" id="memo-score"></div>
+        <div class="memo-board" id="memo-board"></div>
+      </div>
+    </section>
+
+    <section id="screen-hidden" class="screen">
+      <header class="bar">
+        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
+        <div class="bar-mid col"><button class="level-pill" id="hidden-level" data-pick="hidden" aria-label="레벨 고르기"></button><div class="targets" id="hidden-targets"></div></div>
+        <button class="round-btn" id="hidden-hint" aria-label="힌트">💡</button>
+      </header>
+      <div class="stage"><canvas id="hidden-canvas"></canvas></div>
+    </section>
+
+    <section id="screen-pattern" class="screen">
+      <header class="bar">
+        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
+        <div class="bar-mid col"><button class="level-pill" id="pattern-level" data-pick="pattern" aria-label="레벨 고르기"></button><div class="dots" id="pattern-dots"></div></div>
+        <span class="spacer"></span>
+      </header>
+      <div class="pattern-body">
+        <p class="pattern-ask">다음은 뭘까?</p>
+        <div class="pattern-seq" id="pattern-seq"></div>
+        <div class="pattern-opts" id="pattern-opts"></div>
       </div>
     </section>
 
@@ -171,6 +218,7 @@
   <script src="js/bg-data.js"></script>
   <script src="js/bg-images.js"></script>
   <script src="js/emoji-render.js"></script>
+  <script src="js/faces.js"></script>
   <script src="js/maze.js"></script>
   <script src="js/scene.js"></script>
   <script src="js/draw.js"></script>
@@ -182,6 +230,12 @@
   <script src="js/ui-chop.js"></script>
   <script src="js/coconut.js"></script>
   <script src="js/ui-coco.js"></script>
+  <script src="js/memory.js"></script>
+  <script src="js/ui-memo.js"></script>
+  <script src="js/hidden.js"></script>
+  <script src="js/ui-hidden.js"></script>
+  <script src="js/pattern.js"></script>
+  <script src="js/ui-pattern.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 // 틀린그림 화면: 두 그림을 보고 다른 곳을 누른다.
 (function (root) {
   const MAX_LEVEL = Scene.MAX_LEVEL;
-  const HINT_AFTER_MS = 120000; // 2분 동안 아무것도 안 누르면 힌트
+  const HINT_AFTER_MS = 120000; // 판을 시작하거나 마지막으로 차이를 찾은 뒤 2분이 지나면 힌트
   const MARK = '#FF3B6B';
 
   const S = {
@@ -15,7 +15,6 @@
     S.canvas = document.getElementById('spot-canvas');
     S.ctx = S.canvas.getContext('2d');
     S.canvas.addEventListener('pointerdown', onDown);
-    document.getElementById('spot-hint').addEventListener('click', () => { Sound.tap(); showHint(); });
   }
 
   function start(opts) {
@@ -209,7 +208,6 @@
     const px = e.clientX - r.left, py = e.clientY - r.top;
     const rect = S.rects.find((q) => px >= q.x && px <= q.x + S.picW && py >= q.y && py <= q.y + S.picH);
     if (!rect) return;
-    S.lastActivity = performance.now();
     const nx = (px - rect.x) / S.picW, ny = (py - rect.y) / S.picH;
     const idx = Scene.hitTest(S.scene, nx, ny, S.found, 0.03);
     if (idx >= 0) {
@@ -224,6 +222,8 @@
     const now = performance.now();
     S.found.add(idx);
     S.foundAt.set(idx, now);
+    // 힌트 시간은 마지막으로 차이를 찾은 때부터 다시 센다 (그냥 누르는 것은 세지 않음)
+    S.lastActivity = now;
     if (S.hintIdx === idx) S.hintIdx = -1;
     updateDots();
     if (quiet) return;
