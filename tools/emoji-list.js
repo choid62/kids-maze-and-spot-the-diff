@@ -23,4 +23,6 @@ module.exports = [
   // 동물원
   'Lion', 'Elephant', 'Giraffe', 'Zebra', 'Monkey', 'Panda', 'Koala', 'Kangaroo', 'Hippopotamus', 'Rhinoceros',
   'Flamingo', 'Parrot', 'Peacock', 'Owl', 'Palm tree', 'Cactus',
+  // 코코넛 놀이
+  'Coconut',
 ];

@@ -4,6 +4,7 @@
 //   pattern: { type: 'dots' | 'hearts' | 'stars', color } 몸통에 입히는 무늬
 //   parts: { [부분 번호]: { hue, scale, rot, hide } }
 //   eyes: 'smile' 이면 동그란 눈 대신 웃는 눈
+//   recolor: { '#원래색': '#바꿀색' } 특정 색만 바꿔 그리기 (예: 코코넛 속살을 하얗게)
 (function (root) {
   const prepared = {};
 
@@ -119,6 +120,7 @@
       const pm = pi >= 0 ? parts[pi] : null;
       if (pm && pm.hide) continue;
       let fill = e.p[i][1];
+      if (m.recolor && m.recolor[fill]) fill = m.recolor[fill];
       if (m.hue) fill = hueShift(fill, m.hue);
       if (pm && pm.hue) fill = hueShift(fill, pm.hue);
       const tr = pm && (pm.scale || pm.rot);

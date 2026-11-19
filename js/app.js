@@ -1,7 +1,7 @@
 // 화면 전환, 홈, 축하, 스티커 북, 부모 설정
 (function (root) {
   const $ = (id) => document.getElementById(id);
-  const SCREENS = ['home', 'maze', 'spot', 'stickers'];
+  const SCREENS = ['home', 'maze', 'spot', 'chop', 'coco', 'stickers'];
   const CHEERS = ['잘했어!', '최고야!', '대단해!', '멋져!', '해냈다!'];
   const STICKER_KINDS = Object.keys(EMOJI);
   let current = null;
@@ -23,6 +23,8 @@
   function show(name) {
     if (current === 'maze' && name !== 'maze') MazeGame.stop();
     if (current === 'spot' && name !== 'spot') SpotGame.stop();
+    if (current === 'chop' && name !== 'chop') ChopGame.stop();
+    if (current === 'coco' && name !== 'coco') CocoGame.stop();
     hide('celebrate');
     hide('levels');
     for (const s of SCREENS) $('screen-' + s).classList.toggle('active', s === name);
@@ -30,6 +32,8 @@
     const opts = debugOpts || {};
     debugOpts = null;
     if (name === 'maze') MazeGame.start(opts);
+    else if (name === 'chop') ChopGame.enter(opts);
+    else if (name === 'coco') CocoGame.enter(opts);
     else if (name === 'spot') SpotGame.start(opts);
     else if (name === 'stickers') renderStickers();
     else renderHome();
@@ -59,9 +63,11 @@
     $('star-count').textContent = Store.get('stickers').length;
     $('home-maze-level').textContent = '레벨 ' + Store.get('mazeLevel');
     $('home-spot-level').textContent = '레벨 ' + Store.get('spotLevel');
-    document.querySelectorAll('.btn-art').forEach((c) => {
+    $('chop-art').innerHTML = ChopGame.handSVG(2, true) + ChopGame.handSVG(3, false);
+    document.querySelectorAll('canvas.btn-art').forEach((c) => {
       const { ctx, w, h } = sizeCanvas(c);
       if (c.dataset.art === 'maze') drawMazeArt(ctx, w, h);
+      else if (c.dataset.art === 'coco') Draw.object(ctx, 'coconut', w / 2, h / 2, w * 0.72, null, false, { recolor: { '#D3D3D3': '#FFFFFF', '#9B9B9B': '#FFF6E6' } });
       else drawSpotArt(ctx, w, h);
     });
   }
@@ -99,23 +105,26 @@
   }
 
   // ---------- 축하 ----------
-  function celebrate(game, newLevel) {
-    const kind = STICKER_KINDS[Math.floor(Math.random() * STICKER_KINDS.length)];
-    const sticker = { kind };
-    Store.addSticker(sticker);
+  // opts: { text 직접 정한 말, noSticker 스티커 없음, sad 진 경우(빵빠레와 꽃가루 없음) }
+  function celebrate(game, newLevel, opts) {
+    opts = opts || {};
+    const sticker = opts.noSticker ? null : { kind: STICKER_KINDS[Math.floor(Math.random() * STICKER_KINDS.length)] };
+    if (sticker) Store.addSticker(sticker);
 
-    const text = CHEERS[Math.floor(Math.random() * CHEERS.length)];
+    const text = opts.text || CHEERS[Math.floor(Math.random() * CHEERS.length)];
     $('cheer-text').textContent = text;
     $('levelup').classList.toggle('hidden', !newLevel);
     if (newLevel) $('levelup').textContent = `레벨 업! 이제 레벨 ${newLevel}`;
     open('celebrate');
-    const { ctx, w, h } = sizeCanvas($('sticker-prize'));
-    ctx.clearRect(0, 0, w, h);
-    Draw.object(ctx, sticker.kind, w / 2, h / 2, w * 0.8, sticker.color, false, sticker);
+    $('sticker-prize').classList.toggle('hidden', !sticker);
+    if (sticker) {
+      const { ctx, w, h } = sizeCanvas($('sticker-prize'));
+      ctx.clearRect(0, 0, w, h);
+      Draw.object(ctx, sticker.kind, w / 2, h / 2, w * 0.8, null, false, sticker);
+    }
     $('celebrate').dataset.game = game;
-    Sound.win();
+    if (!opts.sad) { Sound.win(); confetti(); }
     setTimeout(() => Sound.say(text), 500);
-    confetti();
   }
 
   let confettiRaf = 0;
@@ -260,6 +269,8 @@
   // ---------- 시작 ----------
   function boot() {
     MazeGame.init(celebrate);
+    ChopGame.init(celebrate);
+    CocoGame.init(celebrate);
     SpotGame.init(celebrate);
     bindSettings();
 
@@ -275,6 +286,8 @@
       hide('celebrate');
       Sound.tap();
       if ($('celebrate').dataset.game === 'maze') MazeGame.start({});
+      else if ($('celebrate').dataset.game === 'chop') ChopGame.restart();
+      else if ($('celebrate').dataset.game === 'coco') CocoGame.restart();
       else SpotGame.start({});
     });
 

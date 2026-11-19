@@ -21,6 +21,8 @@
       <h1 class="title">뭐 하고 놀까?</h1>
       <div class="home-buttons">
         <button class="big-btn maze" data-go="maze"><canvas class="btn-art" data-art="maze"></canvas><span class="btn-label">미로<small id="home-maze-level"></small></span></button>
+        <button class="big-btn chop" data-go="chop"><div class="btn-art hands-art" id="chop-art"></div><span class="btn-label">젓가락<small>손가락 놀이</small></span></button>
+        <button class="big-btn coco" data-go="coco"><canvas class="btn-art" data-art="coco"></canvas><span class="btn-label">코코넛<small>크랙 놀이</small></span></button>
         <button class="big-btn spot" data-go="spot"><canvas class="btn-art" data-art="spot"></canvas><span class="btn-label">틀린그림<small id="home-spot-level"></small></span></button>
       </div>
       <button class="sticker-btn" data-go="stickers">⭐ <span id="star-count">0</span></button>
@@ -42,6 +44,66 @@
         <button class="round-btn" id="spot-hint" aria-label="힌트">💡</button>
       </header>
       <div class="stage"><canvas id="spot-canvas"></canvas></div>
+    </section>
+
+    <section id="screen-chop" class="screen">
+      <header class="bar">
+        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
+        <div class="bar-mid"><button class="level-pill" id="chop-mode">젓가락 놀이</button></div>
+        <button class="round-btn" id="chop-new" aria-label="새 판">🔄</button>
+      </header>
+      <div class="chop-menu" id="chop-menu">
+        <button class="big-btn chop mode" id="chop-cpu">🤖 로봇이랑</button>
+        <div class="chop-levels" id="chop-levels">
+          <button data-lv="1">쉬움</button><button data-lv="2">보통</button><button data-lv="3">어려움</button>
+        </div>
+        <button class="big-btn spot mode" id="chop-duo">👫 둘이서</button>
+        <p class="chop-rules">내 손으로 상대 손을 톡! 치면 손가락이 더해져요.<br>5개가 넘으면 그 손은 쉬어요. 두 손이 다 쉬면 져요.<br>한 손이 쉬고 다른 손이 2나 4이면, 나누기로 똑같이 나눌 수 있어요.</p>
+      </div>
+      <div class="chop-board hidden" id="chop-board">
+        <div class="chop-side top" id="chop-top">
+          <div class="split-row hidden" data-p="1"></div>
+          <div class="chop-tools"><span class="turn-msg"></span><button class="split-btn" data-p="1">✋ 나누기 🤚</button></div>
+          <div class="chop-hands">
+            <button class="hand" data-p="1" data-h="0"></button>
+            <canvas class="chop-avatar" id="chop-avatar-1"></canvas>
+            <button class="hand" data-p="1" data-h="1"></button>
+          </div>
+        </div>
+        <div class="chop-side bottom" id="chop-bottom">
+          <div class="split-row hidden" data-p="0"></div>
+          <div class="chop-tools"><span class="turn-msg"></span><button class="split-btn" data-p="0">✋ 나누기 🤚</button></div>
+          <div class="chop-hands">
+            <button class="hand" data-p="0" data-h="0"></button>
+            <canvas class="chop-avatar" id="chop-avatar-0"></canvas>
+            <button class="hand" data-p="0" data-h="1"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-coco" class="screen">
+      <header class="bar">
+        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
+        <div class="bar-mid"><button class="level-pill" id="coco-mode">코코넛 크랙</button></div>
+        <button class="round-btn" id="coco-new" aria-label="새 판">🔄</button>
+      </header>
+      <div class="chop-menu" id="coco-menu">
+        <button class="big-btn coco mode" id="coco-1v1">🤖 1:1</button>
+        <button class="big-btn spot mode" id="coco-3p">🤖 1:1:1 🤖</button>
+        <div class="chop-levels" id="coco-levels">
+          <button data-lv="1">쉬움</button><button data-lv="2">보통</button><button data-lv="3">어려움</button>
+        </div>
+        <p class="chop-rules">"Coco·nut, Coco·nut, Coco·nut, Crack!"<br>7박자에 맞춰 시계 방향으로 코코넛을 하나씩 톡톡!<br>Crack!에 걸린 코코넛은 쩍 갈라지고 → 우유가 쏟아지고 → 사라져요.<br>내 코코넛을 누르고, 한 번 더 누르면 거기서부터,<br>옆 코코넛을 누르면 옆에서부터 세요.<br>우유 쏟은 반쪽이 두 개면 내 차례에 다시 하나로 합칠 수 있어요 (한 판에 한 번).<br>코코넛이 다 사라지면 탈락, 끝까지 남으면 이겨요.</p>
+      </div>
+      <div class="coco-board hidden" id="coco-board">
+        <div class="coco-table" id="coco-table">
+          <div class="coco-center">
+            <div class="coco-word" id="coco-word"></div>
+            <button class="merge-btn hidden" id="coco-merge">🥥 합치기</button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="screen-stickers" class="screen">
@@ -116,6 +178,10 @@
   <script src="js/audio.js"></script>
   <script src="js/ui-maze.js"></script>
   <script src="js/ui-spot.js"></script>
+  <script src="js/chop.js"></script>
+  <script src="js/ui-chop.js"></script>
+  <script src="js/coconut.js"></script>
+  <script src="js/ui-coco.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

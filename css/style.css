@@ -209,3 +209,124 @@ button.level-pill { border: none; font-family: inherit; color: var(--ink); curso
 .t5 { background: #A06CD5; }
 .level-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 14px; }
 .level-legend .chip { color: #fff; font-size: 13px; font-weight: 800; padding: 4px 10px; border-radius: 999px; }
+
+/* 홈: 놀이 버튼 3개 */
+.big-btn.chop { background: #FF9F5A; }
+.hands-art { display: flex; align-items: center; justify-content: center; gap: 2px; padding: 10px 6px; }
+.hands-art svg { width: 48%; height: auto; }
+.home-buttons .btn-art { width: 96px; height: 96px; }
+.home-buttons { gap: 16px; }
+
+/* 젓가락 놀이: 고르기 화면 */
+.chop-menu { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 16px; }
+.chop-menu .big-btn.mode { flex: none; width: min(100%, 380px); justify-content: center; font-size: 30px; padding: 22px; }
+.chop-levels { display: flex; gap: 10px; margin-top: -4px; }
+.chop-levels button { border: none; border-radius: 999px; padding: 10px 18px; font-size: 18px; font-weight: 800; background: #fff; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.1); }
+.chop-levels button.on { background: #FF9F5A; color: #fff; }
+.chop-rules { text-align: center; font-size: 15px; line-height: 1.7; color: #7a6a60; margin: 6px 0 0; }
+
+/* 젓가락 놀이: 판 */
+.chop-board { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.chop-side { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 8px; padding: 8px 12px 14px; border-radius: 28px; margin: 4px 10px; transition: background 0.3s; min-height: 0; }
+.chop-side.turn { background: rgba(255, 190, 90, 0.22); }
+.chop-side.top { transform: rotate(180deg); }
+/* 로봇이랑 할 때는 위쪽 손만 거꾸로 두고, 로봇 얼굴과 글은 바로 보이게 */
+.chop-board:not(.duo) .top .chop-tools, .chop-board:not(.duo) .top .chop-avatar { transform: rotate(180deg); }
+.chop-board:not(.duo) .top .split-btn { display: none; }
+.chop-tools { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 44px; }
+.turn-msg { font-size: 20px; font-weight: 900; color: var(--accent); }
+.split-btn { border: none; border-radius: 999px; padding: 10px 16px; font-size: 17px; font-weight: 800; background: #fff; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.1); }
+.split-btn:disabled { opacity: 0.35; }
+.chop-hands { display: flex; align-items: flex-end; justify-content: center; gap: 4px; width: 100%; }
+.chop-avatar { width: 54px; height: 54px; flex: none; margin-bottom: 20px; }
+.hand {
+  position: relative;
+  border: none;
+  background: transparent;
+  padding: 0 0 26px;
+  width: min(36vw, 150px);
+  transition: transform 0.25s ease;
+  touch-action: manipulation;
+}
+.hand svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.08)); }
+.hand .num { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); font-size: 22px; font-weight: 900; color: var(--ink); }
+.hand.selected { transform: translateY(-10px) scale(1.06); }
+.hand.selected svg { filter: drop-shadow(0 0 10px rgba(255, 150, 40, 0.9)); }
+.hand.dead { opacity: 0.75; }
+.hand.attacking { z-index: 5; }
+.hand.pop svg { animation: hand-pop 0.35s ease-out; }
+@keyframes hand-pop { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+.shake { animation: shake 0.35s; }
+@keyframes shake { 0%, 100% { translate: 0; } 25% { translate: -6px 0; } 75% { translate: 6px 0; } }
+.split-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.split-opt { display: flex; align-items: center; gap: 2px; border: none; border-radius: 18px; background: #fff; padding: 6px 12px; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.1); }
+.split-opt .mini svg { width: 38px; height: auto; display: block; }
+.split-opt b { font-size: 18px; margin-left: 6px; }
+.chop-board:not(.duo) .top .hand .num { transform: translateX(-50%) rotate(180deg); }
+
+/* 홈: 놀이 버튼 4개 */
+.big-btn.coco { background: #B98A5E; }
+#screen-home { overflow-y: auto; }
+.home-buttons { gap: 14px; }
+.home-buttons .big-btn { padding: 12px 16px; font-size: 30px; }
+.home-buttons .btn-art { width: 80px; height: 80px; border-radius: 18px; }
+.title { font-size: 30px; }
+
+/* 코코넛 크랙 */
+.coco-board { flex: 1; display: flex; min-height: 0; padding: 4px 8px 12px; }
+.coco-table { position: relative; flex: 1; background: radial-gradient(circle at 50% 50%, #FFF1D6 0%, #FBE3BC 70%); border-radius: 32px; min-height: 0; }
+.coco-board[data-size="2"] { --u: min(26vw, 100px); }
+.coco-board[data-size="4"] { --u: min(15vw, 64px); }
+.seat { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: opacity 0.3s; }
+.seat.bottom { left: 50%; bottom: 10px; transform: translateX(-50%); }
+.seat.top { left: 50%; top: 10px; transform: translateX(-50%); flex-direction: column-reverse; }
+.seat.left { left: 6px; top: 50%; transform: translateY(-50%); }
+.seat.right { right: 6px; top: 50%; transform: translateY(-50%); }
+.seat.gone { opacity: 0.4; }
+.seat .who { position: relative; }
+.seat .avatar { width: 56px; height: 56px; display: block; }
+.seat .pointer { position: absolute; right: -16px; top: -6px; font-size: 22px; visibility: hidden; animation: bob 0.8s ease-in-out infinite; }
+.seat.counter .pointer { visibility: visible; }
+.seat.counter .avatar { filter: drop-shadow(0 0 8px rgba(255, 150, 40, 0.9)); }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.units { display: flex; gap: 4px; align-items: flex-end; min-height: var(--u); }
+.unit { position: relative; width: var(--u); transition: transform 0.15s; }
+.unit svg, .unit canvas.nut { width: 100%; height: auto; display: block; }
+.unit canvas.nut { aspect-ratio: 1; }
+.unit.beat { transform: scale(1.22); }
+.unit.beat::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 4px solid #FF8A3D; }
+.unit.pop { animation: hand-pop 0.45s ease-out; }
+.unit.out { width: auto; font-size: 15px; font-weight: 800; color: #9a8a80; padding: 8px; }
+.unit .milk { position: absolute; left: 50%; bottom: -4px; transform: translateX(-50%); display: flex; gap: 3px; }
+.unit .milk i { width: 9px; height: 11px; background: #fff; border: 2px solid #E0D6CC; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; }
+.coco-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 12px; width: 46%; text-align: center; }
+.coco-board[data-size="2"] .coco-center { width: 80%; }
+.coco-word { font-size: 22px; font-weight: 900; color: #8A5A2E; min-height: 1.4em; }
+.coco-word.big { font-size: 40px; color: #FF5A2E; }
+.coco-choice { display: flex; flex-direction: column; gap: 10px; }
+.coco-choice button { border: none; border-radius: 999px; padding: 12px 18px; font-size: 18px; font-weight: 900; color: #fff; background: #FF9F5A; box-shadow: 0 4px 0 rgba(0, 0, 0, 0.12); }
+.coco-choice button + button { background: #4FAEF2; }
+
+/* 코코넛 크랙: 원형 배치 (위의 예전 자리 스타일을 덮어씀) */
+.coco-table .seat { position: absolute; transform: translate(-50%, -50%); display: block; }
+.coco-table .seat canvas { width: 52px; height: 52px; display: block; }
+.coco-table .seat .pointer { position: absolute; right: -14px; top: -8px; font-size: 22px; visibility: hidden; animation: bob 0.8s ease-in-out infinite; }
+.coco-table .seat.counter .pointer { visibility: visible; }
+.coco-table .seat.counter canvas { filter: drop-shadow(0 0 8px rgba(255, 150, 40, 0.9)); }
+.coco-table .seat.gone { opacity: 0.4; }
+.coco-table .seat .out-label { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); font-size: 13px; font-weight: 800; color: #8a7a70; white-space: nowrap; }
+.coco-table .nut { position: absolute; cursor: pointer; transition: filter 0.15s; }
+.coco-table .nut svg, .coco-table .nut canvas { width: 100%; height: 100%; display: block; transition: transform 0.15s; pointer-events: none; }
+.coco-table .nut.can::before { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 3px dashed rgba(255, 138, 61, 0.8); }
+.coco-table .nut.selected svg, .coco-table .nut.selected canvas { transform: scale(1.12); }
+.coco-table .nut.selected::before { border-style: solid; border-color: #FF8A3D; border-width: 4px; }
+.coco-table .nut.beat svg, .coco-table .nut.beat canvas { transform: scale(1.22); }
+.coco-table .nut.beat::after { content: ''; position: absolute; inset: -7px; border-radius: 50%; border: 4px solid #FF5A2E; }
+.coco-table .nut.pop svg, .coco-table .nut.pop canvas { animation: hand-pop 0.45s ease-out; }
+.coco-table .coco-center { width: 52%; }
+.coco-board[data-size] { --u: auto; }
+.coco-table .nut.selected::before { content: ''; position: absolute; inset: -5px; border-radius: 50%; }
+.merge-btn { border: none; border-radius: 999px; padding: 12px 22px; font-size: 20px; font-weight: 900; color: #fff; background: #8B5A2B; box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15); animation: bob 1s ease-in-out infinite; position: relative; z-index: 3; }
+.coco-table .coco-word { font-size: 19px; }
+.coco-table .coco-word.big { font-size: 38px; }
+.coco-table .coco-center { width: 40%; }
