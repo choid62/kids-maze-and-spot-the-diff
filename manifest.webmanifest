@@ -1,0 +1,16 @@
+{
+  "name": "미로랑 틀린그림",
+  "short_name": "미로놀이",
+  "description": "매번 새로 만들어지는 아이용 미로와 틀린그림 찾기",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF7EC",
+  "theme_color": "#FFB74D",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

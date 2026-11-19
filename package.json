@@ -1,0 +1,11 @@
+{
+  "name": "kids-maze-and-spot-the-diff",
+  "version": "0.1.0",
+  "private": true,
+  "description": "5살 아이를 위한 자동 생성 미로와 틀린그림 찾기 (PWA)",
+  "scripts": {
+    "start": "node tools/serve.js",
+    "test": "node --test tests/maze.test.js tests/scene.test.js",
+    "icons": "node tools/make-icons.js"
+  }
+}
