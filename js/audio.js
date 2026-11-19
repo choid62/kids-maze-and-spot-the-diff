@@ -53,10 +53,11 @@
         if (!s) return;
         s.cancel();
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'ko-KR';
+        u.lang = 'en-US'; // 영어 음성은 거의 모든 기기에 깔려 있다
         u.rate = 0.95;
         u.pitch = 1.3;
-        const v = s.getVoices().find((x) => x.lang && x.lang.toLowerCase().startsWith('ko'));
+        const voices = s.getVoices();
+        const v = voices.find((x) => x.lang === 'en-US') || voices.find((x) => x.lang && x.lang.toLowerCase().startsWith('en'));
         if (v) u.voice = v;
         s.speak(u);
       } catch (e) { /* 음성 미지원 */ }

@@ -246,7 +246,7 @@
       if (up) Store.set('spotLevel', lv + 1);
       setTimeout(() => { if (S.active) S.onWin('spot', up ? lv + 1 : 0); }, 800);
     } else {
-      Sound.say('찾았다!');
+      Sound.say('Found it!');
     }
   }
 

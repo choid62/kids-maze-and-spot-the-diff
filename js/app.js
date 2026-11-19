@@ -2,7 +2,8 @@
 (function (root) {
   const $ = (id) => document.getElementById(id);
   const SCREENS = ['home', 'maze', 'spot', 'chop', 'coco', 'stickers'];
-  const CHEERS = ['잘했어!', '최고야!', '대단해!', '멋져!', '해냈다!'];
+  // [화면 글자, 영어 목소리]
+  const CHEERS = [['잘했어!', 'Good job!'], ['최고야!', 'Awesome!'], ['대단해!', 'Amazing!'], ['멋져!', 'Great!'], ['해냈다!', 'You did it!']];
   const STICKER_KINDS = Object.keys(EMOJI);
   let current = null;
 
@@ -105,13 +106,15 @@
   }
 
   // ---------- 축하 ----------
-  // opts: { text 직접 정한 말, noSticker 스티커 없음, sad 진 경우(빵빠레와 꽃가루 없음) }
+  // opts: { text 직접 정한 말(화면), speech 영어 목소리, noSticker 스티커 없음, sad 진 경우(빵빠레와 꽃가루 없음) }
   function celebrate(game, newLevel, opts) {
     opts = opts || {};
     const sticker = opts.noSticker ? null : { kind: STICKER_KINDS[Math.floor(Math.random() * STICKER_KINDS.length)] };
     if (sticker) Store.addSticker(sticker);
 
-    const text = opts.text || CHEERS[Math.floor(Math.random() * CHEERS.length)];
+    const cheer = CHEERS[Math.floor(Math.random() * CHEERS.length)];
+    const text = opts.text || cheer[0];
+    const speech = opts.text ? opts.speech : cheer[1]; // 목소리는 영어
     $('cheer-text').textContent = text;
     $('levelup').classList.toggle('hidden', !newLevel);
     if (newLevel) $('levelup').textContent = `레벨 업! 이제 레벨 ${newLevel}`;
@@ -124,7 +127,7 @@
     }
     $('celebrate').dataset.game = game;
     if (!opts.sad) { Sound.win(); confetti(); }
-    setTimeout(() => Sound.say(text), 500);
+    if (speech) setTimeout(() => Sound.say(speech), 500);
   }
 
   let confettiRaf = 0;

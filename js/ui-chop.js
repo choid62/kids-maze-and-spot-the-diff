@@ -268,9 +268,9 @@
     S.busy = false;
     render();
     let result;
-    if (winner === -1) result = { text: '비겼어요!', noSticker: true, sad: true };
-    else if (S.mode === 'cpu') result = winner === 0 ? {} : { text: '아쉽다! 다시 해 볼까?', noSticker: true, sad: true };
-    else result = { text: winner === 0 ? '아래쪽 승리!' : '위쪽 승리!', noSticker: true };
+    if (winner === -1) result = { text: '비겼어요!', speech: 'It is a tie!', noSticker: true, sad: true };
+    else if (S.mode === 'cpu') result = winner === 0 ? {} : { text: '아쉽다! 다시 해 볼까?', speech: 'Oh no! Try again!', noSticker: true, sad: true };
+    else result = { text: winner === 0 ? '아래쪽 승리!' : '위쪽 승리!', speech: winner === 0 ? 'Bottom wins!' : 'Top wins!', noSticker: true };
     later(() => S.onEnd('chop', 0, result), 700);
   }
 

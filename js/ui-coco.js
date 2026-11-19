@@ -359,7 +359,7 @@
     render();
     $('coco-merge').classList.add('hidden');
     say(w === 0 ? '내가 이겼다!' : w === -2 ? '비겼어요!' : '아쉽다!');
-    const result = w === 0 ? {} : w === -2 ? { text: '비겼어요!', noSticker: true, sad: true } : { text: '아쉽다! 다시 해 볼까?', noSticker: true, sad: true };
+    const result = w === 0 ? {} : w === -2 ? { text: '비겼어요!', speech: 'It is a tie!', noSticker: true, sad: true } : { text: '아쉽다! 다시 해 볼까?', speech: 'Oh no! Try again!', noSticker: true, sad: true };
     later(() => S.onEnd('coco', 0, result), 900);
   }
 
