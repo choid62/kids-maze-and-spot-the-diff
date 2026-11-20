@@ -87,6 +87,25 @@
     $('memo-score').classList.toggle('hidden', S.mode !== 'bot');
     build();
     renderScore();
+    peek();
+  }
+
+  // 시작할 때 모든 카드를 잠깐 보여 주고 뒤집는다 (외울 수 있는 만큼 보고 시작)
+  const PEEK_SEC = 3;
+  function peek() {
+    S.busy = true;
+    const cards = document.querySelectorAll('#memo-board .card');
+    cards.forEach((c) => c.classList.add('open'));
+    const el = $('memo-peek');
+    el.classList.remove('hidden');
+    Sound.say('Remember the cards!');
+    for (let k = 0; k < PEEK_SEC; k++) later(() => { el.textContent = `Remember the cards! ${PEEK_SEC - k}`; }, k * 1000);
+    later(() => {
+      el.classList.add('hidden');
+      cards.forEach((c) => { if (!S.matched.has(+c.dataset.i)) c.classList.remove('open'); });
+      Sound.tap();
+      later(() => { S.busy = false; }, 500);
+    }, PEEK_SEC * 1000);
   }
 
   // ---------- 카드 ----------

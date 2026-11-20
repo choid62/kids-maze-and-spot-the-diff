@@ -1,6 +1,6 @@
 // 오프라인 실행용 서비스 워커.
 // 저장해 둔 파일로 바로 열고, 인터넷이 되면 뒤에서 새 버전을 받아 다음 실행 때 반영한다.
-const CACHE = 'kmsd-v33';
+const CACHE = 'kmsd-v35';
 importScripts('js/bg-data.js', 'js/words.js'); // 배경 그림 목록 (BG_SIZES), 단어 그림 목록 (Words)
 const FILES = [
   './',
@@ -32,6 +32,8 @@ const FILES = [
   'js/ui-ten.js',
   'js/rps.js',
   'js/ui-rps.js',
+  'js/garden.js',
+  'js/ui-grow.js',
   'assets/rps/rock.svg',
   'assets/rps/paper.svg',
   'assets/rps/scissors.svg',

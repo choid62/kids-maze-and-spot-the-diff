@@ -46,6 +46,12 @@
           </div>
         </section>
         <section class="home-group">
+          <h2 class="group-title">🔬 Discover</h2>
+          <div class="home-buttons">
+            <button class="tile grow" data-go="grow"><canvas class="btn-art" data-art="grow"></canvas><span class="t-name">Grow It!</span><small>Plant a seed</small></button>
+          </div>
+        </section>
+        <section class="home-group">
           <h2 class="group-title">🤖 Play Together</h2>
           <div class="home-buttons">
             <button class="tile chop" data-go="chop"><div class="btn-art hands-art" id="chop-art"></div><span class="t-name">Chopsticks</span><small>Finger game</small></button>
@@ -175,6 +181,7 @@
         <p class="chop-rules">Flip two cards to find matching pictures.<br>Find a pair and go again! The robot remembers cards it has seen.</p>
       </div>
       <div class="memo-play hidden" id="memo-play">
+        <p class="memo-peek hidden" id="memo-peek"></p>
         <div class="memo-score hidden" id="memo-score"></div>
         <div class="memo-board" id="memo-board"></div>
       </div>
@@ -307,6 +314,26 @@
       </div>
     </section>
 
+    <section id="screen-grow" class="screen">
+      <header class="bar">
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid col"><button class="level-pill" id="grow-title">Grow It!</button><div class="dots" id="grow-dots"></div></div>
+        <button class="round-btn" id="grow-new" aria-label="New plant">🔄</button>
+      </header>
+      <div class="grow-body">
+        <p class="grow-caption" id="grow-caption"></p>
+        <div class="grow-stage" id="grow-stage">
+          <canvas id="grow-canvas"></canvas>
+          <div class="grow-seeds hidden" id="grow-seeds"></div>
+          <div class="grow-cycle hidden" id="grow-cycle"></div>
+        </div>
+        <div class="grow-tools">
+          <button class="big-btn grow-water hidden" id="grow-water">💧 Water</button>
+          <div class="grow-basket" id="grow-basket"><img src="assets/words/basket.svg" alt=""><b id="grow-count">0</b></div>
+        </div>
+      </div>
+    </section>
+
     <section id="screen-stickers" class="screen">
       <header class="bar">
         <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
@@ -327,6 +354,10 @@
       <div class="row">
         <button class="round-btn big" id="cele-home" aria-label="Home">🏠</button>
         <button class="round-btn big primary" id="cele-next" aria-label="Next">▶</button>
+      </div>
+      <div class="level-choice hidden" id="level-choice">
+        <button class="big-btn again" id="cele-again">🔁 <span id="cele-again-text">Again</span></button>
+        <button class="big-btn up" id="cele-up">⬆️ <span id="cele-up-text">Next level</span></button>
       </div>
     </div>
   </div>
@@ -396,6 +427,8 @@
   <script src="js/ui-ten.js"></script>
   <script src="js/rps.js"></script>
   <script src="js/ui-rps.js"></script>
+  <script src="js/garden.js"></script>
+  <script src="js/ui-grow.js"></script>
   <script src="js/memory.js"></script>
   <script src="js/ui-memo.js"></script>
   <script src="js/hidden.js"></script>

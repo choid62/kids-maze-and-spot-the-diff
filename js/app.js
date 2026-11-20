@@ -1,7 +1,7 @@
 // 화면 전환, 홈, 축하, 스티커 북, 부모 설정
 (function (root) {
   const $ = (id) => document.getElementById(id);
-  const SCREENS = ['home', 'maze', 'spot', 'hidden', 'memo', 'pattern', 'chop', 'coco', 'ttt', 'words', 'bus', 'monster', 'ten', 'rps', 'stickers'];
+  const SCREENS = ['home', 'maze', 'spot', 'hidden', 'memo', 'pattern', 'chop', 'coco', 'ttt', 'words', 'bus', 'monster', 'ten', 'rps', 'grow', 'stickers'];
   // [화면 글자, 영어 목소리]
   const CHEERS = [['Good job!', 'Good job!'], ['Awesome!', 'Awesome!'], ['Amazing!', 'Amazing!'], ['Great!', 'Great!'], ['You did it!', 'You did it!']];
   const STICKER_KINDS = Object.keys(EMOJI);
@@ -32,6 +32,7 @@
     if (current === 'monster' && name !== 'monster') MonsterGame.stop();
     if (current === 'ten' && name !== 'ten') TenGame.stop();
     if (current === 'rps' && name !== 'rps') RpsGame.stop();
+    if (current === 'grow' && name !== 'grow') GrowGame.stop();
     if (current === 'memo' && name !== 'memo') MemoGame.stop();
     if (current === 'hidden' && name !== 'hidden') HiddenGame.stop();
     if (current === 'pattern' && name !== 'pattern') PatternGame.stop();
@@ -51,6 +52,7 @@
     else if (name === 'monster') MonsterGame.start(opts);
     else if (name === 'ten') TenGame.start(opts);
     else if (name === 'rps') RpsGame.enter(opts);
+    else if (name === 'grow') GrowGame.start(opts);
     else if (name === 'memo') MemoGame.enter(opts);
     else if (name === 'hidden') HiddenGame.start(opts);
     else if (name === 'pattern') PatternGame.start(opts);
@@ -102,6 +104,7 @@
       else if (c.dataset.art === 'words') drawWordsArt(ctx, w, h);
       else if (c.dataset.art === 'bus') Draw.object(ctx, 'bus', w / 2, h / 2, w * 0.8);
       else if (c.dataset.art === 'ten') drawTenArt(ctx, w, h);
+      else if (c.dataset.art === 'grow') Draw.object(ctx, 'potted_plant', w / 2, h / 2, w * 0.8);
       else drawSpotArt(ctx, w, h);
     });
   }
@@ -242,8 +245,17 @@
     const text = opts.text || cheer[0];
     const speech = opts.text ? opts.speech : cheer[1]; // 목소리는 영어
     $('cheer-text').textContent = text;
-    $('levelup').classList.toggle('hidden', !newLevel);
-    if (newLevel) $('levelup').textContent = `Level up! Now Level ${newLevel}`;
+    // 레벨이 오를 만큼 잘했으면: 다음 레벨로 갈지, 같은 레벨을 한 번 더 할지 고른다 (기본 ▶ 버튼 대신)
+    const choice = !!newLevel && !!LEVEL_GAMES[game];
+    $('levelup').classList.toggle('hidden', !choice);
+    $('level-choice').classList.toggle('hidden', !choice);
+    $('cele-next').classList.toggle('hidden', choice);
+    if (choice) {
+      $('levelup').textContent = `You can try Level ${newLevel}!`;
+      $('cele-again-text').textContent = `Again (Level ${newLevel - 1})`;
+      $('cele-up-text').textContent = `Level ${newLevel}`;
+      $('celebrate').dataset.newLevel = newLevel;
+    }
     open('celebrate');
     $('sticker-prize').classList.toggle('hidden', !sticker);
     if (sticker) {
@@ -470,6 +482,7 @@
     MonsterGame.init(celebrate);
     TenGame.init(celebrate);
     RpsGame.init(celebrate);
+    GrowGame.init(celebrate);
     MemoGame.init(celebrate);
     HiddenGame.init(celebrate);
     PatternGame.init(celebrate);
@@ -492,6 +505,14 @@
     document.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => { Sound.unlock(); Sound.tap(); openLevels(b.dataset.pick); }));
     $('levels-close').addEventListener('click', () => hide('levels'));
     $('cele-home').addEventListener('click', () => { hide('celebrate'); go('home'); });
+    // 다음 레벨 / 한 번 더 (게임이 이미 레벨을 올려 두었으므로 한 번 더면 되돌린다)
+    $('cele-up').addEventListener('click', () => $('cele-next').click());
+    $('cele-again').addEventListener('click', () => {
+      const info = LEVEL_GAMES[$('celebrate').dataset.game];
+      const lv = Number($('celebrate').dataset.newLevel) - 1;
+      if (info && lv >= 1) Store.set(info.key, lv);
+      $('cele-next').click();
+    });
     $('cele-next').addEventListener('click', () => {
       hide('celebrate');
       Sound.tap();
@@ -504,6 +525,7 @@
       else if ($('celebrate').dataset.game === 'monster') MonsterGame.start({});
       else if ($('celebrate').dataset.game === 'ten') TenGame.start({});
       else if ($('celebrate').dataset.game === 'rps') RpsGame.restart();
+      else if ($('celebrate').dataset.game === 'grow') GrowGame.start({});
       else if ($('celebrate').dataset.game === 'memo') MemoGame.restart();
       else if ($('celebrate').dataset.game === 'hidden') HiddenGame.start({});
       else if ($('celebrate').dataset.game === 'pattern') PatternGame.start({});
