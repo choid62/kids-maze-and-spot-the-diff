@@ -1,7 +1,7 @@
 // 화면 전환, 홈, 축하, 스티커 북, 부모 설정
 (function (root) {
   const $ = (id) => document.getElementById(id);
-  const SCREENS = ['home', 'maze', 'spot', 'hidden', 'memo', 'pattern', 'chop', 'coco', 'stickers'];
+  const SCREENS = ['home', 'maze', 'spot', 'hidden', 'memo', 'pattern', 'chop', 'coco', 'ttt', 'stickers'];
   // [화면 글자, 영어 목소리]
   const CHEERS = [['잘했어!', 'Good job!'], ['최고야!', 'Awesome!'], ['대단해!', 'Amazing!'], ['멋져!', 'Great!'], ['해냈다!', 'You did it!']];
   const STICKER_KINDS = Object.keys(EMOJI);
@@ -26,6 +26,7 @@
     if (current === 'spot' && name !== 'spot') SpotGame.stop();
     if (current === 'chop' && name !== 'chop') ChopGame.stop();
     if (current === 'coco' && name !== 'coco') CocoGame.stop();
+    if (current === 'ttt' && name !== 'ttt') TttGame.stop();
     if (current === 'memo' && name !== 'memo') MemoGame.stop();
     if (current === 'hidden' && name !== 'hidden') HiddenGame.stop();
     if (current === 'pattern' && name !== 'pattern') PatternGame.stop();
@@ -38,6 +39,7 @@
     if (name === 'maze') MazeGame.start(opts);
     else if (name === 'chop') ChopGame.enter(opts);
     else if (name === 'coco') CocoGame.enter(opts);
+    else if (name === 'ttt') TttGame.enter(opts);
     else if (name === 'memo') MemoGame.enter(opts);
     else if (name === 'hidden') HiddenGame.start(opts);
     else if (name === 'pattern') PatternGame.start(opts);
@@ -81,8 +83,24 @@
       else if (c.dataset.art === 'hidden') drawHiddenArt(ctx, w, h);
       else if (c.dataset.art === 'pattern') drawPatternArt(ctx, w, h);
       else if (c.dataset.art === 'coco') Draw.object(ctx, 'coconut', w / 2, h / 2, w * 0.72, null, false, { recolor: { '#D3D3D3': '#FFFFFF', '#9B9B9B': '#FFF6E6' } });
+      else if (c.dataset.art === 'ttt') drawTttArt(ctx, w, h);
       else drawSpotArt(ctx, w, h);
     });
+  }
+
+  // 3x3 판에 토끼 셋이 대각선 한 줄, 로봇 둘
+  function drawTttArt(ctx, w, h) {
+    const pad = w * 0.1, cell = (w - pad * 2) / 3;
+    ctx.strokeStyle = '#C9A2E8';
+    ctx.lineWidth = w * 0.035;
+    ctx.lineCap = 'round';
+    for (let k = 1; k < 3; k++) {
+      ctx.beginPath(); ctx.moveTo(pad + cell * k, pad); ctx.lineTo(pad + cell * k, h - pad); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pad, pad + cell * k); ctx.lineTo(w - pad, pad + cell * k); ctx.stroke();
+    }
+    const at = (i, kind) => Draw.object(ctx, kind, pad + cell * (i % 3 + 0.5), pad + cell * (Math.floor(i / 3) + 0.5), cell * 0.8);
+    [0, 4, 8].forEach((i) => at(i, 'rabbit_face'));
+    [2, 3].forEach((i) => at(i, 'robot'));
   }
 
   function drawMazeArt(ctx, w, h) {
@@ -347,6 +365,7 @@
     MazeGame.init(celebrate);
     ChopGame.init(celebrate);
     CocoGame.init(celebrate);
+    TttGame.init(celebrate);
     MemoGame.init(celebrate);
     HiddenGame.init(celebrate);
     PatternGame.init(celebrate);
@@ -367,6 +386,7 @@
       if ($('celebrate').dataset.game === 'maze') MazeGame.start({});
       else if ($('celebrate').dataset.game === 'chop') ChopGame.restart();
       else if ($('celebrate').dataset.game === 'coco') CocoGame.restart();
+      else if ($('celebrate').dataset.game === 'ttt') TttGame.restart();
       else if ($('celebrate').dataset.game === 'memo') MemoGame.restart();
       else if ($('celebrate').dataset.game === 'hidden') HiddenGame.start({});
       else if ($('celebrate').dataset.game === 'pattern') PatternGame.start({});
@@ -381,6 +401,7 @@
         MazeGame.relayout();
         SpotGame.relayout();
         if (current === 'home') renderHome();
+        if (current === 'ttt') TttGame.render();
       }, 120);
     });
 

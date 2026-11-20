@@ -28,6 +28,7 @@
         <button class="tile pattern" data-go="pattern"><canvas class="btn-art" data-art="pattern"></canvas><span class="t-name">다음은?</span><small id="home-pattern-level"></small></button>
         <button class="tile chop" data-go="chop"><div class="btn-art hands-art" id="chop-art"></div><span class="t-name">젓가락</span><small>손가락 놀이</small></button>
         <button class="tile coco" data-go="coco"><canvas class="btn-art" data-art="coco"></canvas><span class="t-name">코코넛</span><small>크랙 놀이</small></button>
+        <button class="tile ttt" data-go="ttt"><canvas class="btn-art" data-art="ttt"></canvas><span class="t-name">틱택토</span><small>세 개 한 줄</small></button>
       </div>
       <button class="sticker-btn" data-go="stickers">⭐ <span id="star-count">0</span></button>
     </section>
@@ -83,6 +84,29 @@
             <button class="hand" data-p="0" data-h="1"></button>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="screen-ttt" class="screen">
+      <header class="bar">
+        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
+        <div class="bar-mid"><button class="level-pill" id="ttt-mode">틱택토</button></div>
+        <button class="round-btn" id="ttt-new" aria-label="새 판">🔄</button>
+      </header>
+      <div class="chop-menu" id="ttt-menu">
+        <button class="big-btn ttt mode" id="ttt-cpu">🤖 로봇이랑</button>
+        <div class="chop-levels" id="ttt-levels">
+          <button data-lv="1">쉬움</button><button data-lv="2">보통</button><button data-lv="3">어려움</button>
+        </div>
+        <button class="big-btn spot mode" id="ttt-duo">👫 둘이서</button>
+        <p class="chop-rules">번갈아 한 칸씩 그림을 놓아요.<br>가로, 세로, 대각선으로 세 개를 한 줄로 놓으면 이겨요!</p>
+      </div>
+      <div class="ttt-board hidden" id="ttt-board">
+        <div class="ttt-players">
+          <div class="ttt-player" data-p="1"><canvas></canvas><span class="msg"></span></div>
+          <div class="ttt-player" data-p="2"><canvas></canvas><span class="msg"></span></div>
+        </div>
+        <div class="ttt-grid" id="ttt-grid"></div>
       </div>
     </section>
 
@@ -230,6 +254,8 @@
   <script src="js/ui-chop.js"></script>
   <script src="js/coconut.js"></script>
   <script src="js/ui-coco.js"></script>
+  <script src="js/tictactoe.js"></script>
+  <script src="js/ui-ttt.js"></script>
   <script src="js/memory.js"></script>
   <script src="js/ui-memo.js"></script>
   <script src="js/hidden.js"></script>

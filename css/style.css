@@ -425,3 +425,20 @@ button.level-pill { border: none; font-family: inherit; color: var(--ink); curso
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); animation: count-in 0.25s ease-out;
 }
 @keyframes count-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------- 틱택토 ---------- */
+.tile.ttt { background: #7BC67E; }
+.big-btn.ttt { background: #7BC67E; }
+.ttt-board { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 8px 16px 20px; min-height: 0; }
+.ttt-players { display: flex; gap: 16px; justify-content: center; width: min(100%, 520px); }
+.ttt-player { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: #fff; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08); opacity: 0.55; transition: opacity 0.2s, transform 0.2s; }
+.ttt-player.turn { opacity: 1; transform: scale(1.06); box-shadow: 0 0 0 4px #FFC46B, 0 3px 0 rgba(0, 0, 0, 0.08); }
+.ttt-player canvas { width: 48px; height: 48px; flex: none; }
+.ttt-player .msg { font-size: 18px; font-weight: 900; color: #8A5A2E; min-width: 4.5em; }
+.ttt-grid { --s: min(92vw, calc(100vh - 230px), 560px); width: var(--s); height: var(--s); display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 10px; padding: 10px; background: #C9A2E8; border-radius: 28px; }
+.ttt-cell { border: none; border-radius: 20px; background: #FFF8EE; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
+.ttt-cell:disabled { cursor: default; }
+.ttt-cell:not(.filled):not(:disabled):active { background: #FFE8C7; }
+.ttt-cell canvas { width: 100%; height: 100%; display: block; pointer-events: none; }
+.ttt-cell.pop canvas { animation: pop 0.3s ease-out; }
+.ttt-cell.win { background: #FFE07A; animation: hand-pop 0.5s ease-out; box-shadow: 0 0 0 5px #FFB020 inset; }
