@@ -1,7 +1,7 @@
 // 화면 전환, 홈, 축하, 스티커 북, 부모 설정
 (function (root) {
   const $ = (id) => document.getElementById(id);
-  const SCREENS = ['home', 'maze', 'spot', 'hidden', 'memo', 'pattern', 'chop', 'coco', 'ttt', 'words', 'stickers'];
+  const SCREENS = ['home', 'maze', 'spot', 'hidden', 'memo', 'pattern', 'chop', 'coco', 'ttt', 'words', 'bus', 'monster', 'ten', 'rps', 'stickers'];
   // [화면 글자, 영어 목소리]
   const CHEERS = [['Good job!', 'Good job!'], ['Awesome!', 'Awesome!'], ['Amazing!', 'Amazing!'], ['Great!', 'Great!'], ['You did it!', 'You did it!']];
   const STICKER_KINDS = Object.keys(EMOJI);
@@ -28,6 +28,10 @@
     if (current === 'coco' && name !== 'coco') CocoGame.stop();
     if (current === 'ttt' && name !== 'ttt') TttGame.stop();
     if (current === 'words' && name !== 'words') WordsGame.stop();
+    if (current === 'bus' && name !== 'bus') BusGame.stop();
+    if (current === 'monster' && name !== 'monster') MonsterGame.stop();
+    if (current === 'ten' && name !== 'ten') TenGame.stop();
+    if (current === 'rps' && name !== 'rps') RpsGame.stop();
     if (current === 'memo' && name !== 'memo') MemoGame.stop();
     if (current === 'hidden' && name !== 'hidden') HiddenGame.stop();
     if (current === 'pattern' && name !== 'pattern') PatternGame.stop();
@@ -42,6 +46,10 @@
     else if (name === 'coco') CocoGame.enter(opts);
     else if (name === 'ttt') TttGame.enter(opts);
     else if (name === 'words') WordsGame.start(opts);
+    else if (name === 'bus') BusGame.start(opts);
+    else if (name === 'monster') MonsterGame.start(opts);
+    else if (name === 'ten') TenGame.start(opts);
+    else if (name === 'rps') RpsGame.enter(opts);
     else if (name === 'memo') MemoGame.enter(opts);
     else if (name === 'hidden') HiddenGame.start(opts);
     else if (name === 'pattern') PatternGame.start(opts);
@@ -78,6 +86,8 @@
     $('home-memo-level').textContent = 'Level ' + Store.get('memoLevel');
     $('home-pattern-level').textContent = 'Level ' + Store.get('patternLevel');
     $('home-words-level').textContent = 'Level ' + Store.get('wordsLevel');
+    for (const g of ['bus', 'monster', 'ten']) $('home-' + g + '-level').textContent = 'Level ' + Store.get(g + 'Level');
+    $('monster-art').innerHTML = MonsterGame.monsterSVG('hungry', '#8E6BE8');
     $('chop-art').innerHTML = ChopGame.handSVG(2, true) + ChopGame.handSVG(3, false);
     document.querySelectorAll('canvas.btn-art').forEach((c) => {
       const { ctx, w, h } = sizeCanvas(c);
@@ -88,8 +98,25 @@
       else if (c.dataset.art === 'coco') Draw.object(ctx, 'coconut', w / 2, h / 2, w * 0.72, null, false, { recolor: { '#D3D3D3': '#FFFFFF', '#9B9B9B': '#FFF6E6' } });
       else if (c.dataset.art === 'ttt') drawTttArt(ctx, w, h);
       else if (c.dataset.art === 'words') drawWordsArt(ctx, w, h);
+      else if (c.dataset.art === 'bus') Draw.object(ctx, 'bus', w / 2, h / 2, w * 0.8);
+      else if (c.dataset.art === 'ten') drawTenArt(ctx, w, h);
       else drawSpotArt(ctx, w, h);
     });
+  }
+
+  // "3 + 7 = 10"
+  function drawTenArt(ctx, w, h) {
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = `900 ${Math.round(w * 0.3)}px system-ui, sans-serif`;
+    ctx.fillStyle = '#FF8A3D';
+    ctx.fillText('3', w * 0.22, h * 0.36);
+    ctx.fillStyle = '#9A7B62';
+    ctx.fillText('+', w * 0.5, h * 0.36);
+    ctx.fillStyle = '#4FAEF2';
+    ctx.fillText('7', w * 0.78, h * 0.36);
+    ctx.fillStyle = '#3C9A2E';
+    ctx.fillText('= 10', w * 0.5, h * 0.74);
   }
 
   // 단어 "cat" 과 고양이 그림이 줄로 이어진 모습
@@ -284,6 +311,9 @@
     memo: { key: 'memoLevel', max: () => Memory.MAX_LEVEL, name: 'Memory', go: () => MemoGame.startSolo() },
     pattern: { key: 'patternLevel', max: () => Pattern.MAX_LEVEL, name: 'What\'s Next?', go: () => PatternGame.start({}) },
     words: { key: 'wordsLevel', max: () => Words.MAX_LEVEL, name: 'Words', go: () => WordsGame.start({}) },
+    bus: { key: 'busLevel', max: () => Numbers.BUS_MAX_LEVEL, name: 'Bus Stop', go: () => BusGame.start({}) },
+    monster: { key: 'monsterLevel', max: () => Numbers.MONSTER_MAX_LEVEL, name: 'Feed Me!', go: () => MonsterGame.start({}) },
+    ten: { key: 'tenLevel', max: () => Numbers.TEN_MAX_LEVEL, name: 'Make 10', go: () => TenGame.start({}) },
   };
 
   function openLevels(game) {
@@ -386,6 +416,10 @@
     CocoGame.init(celebrate);
     TttGame.init(celebrate);
     WordsGame.init(celebrate);
+    BusGame.init(celebrate);
+    MonsterGame.init(celebrate);
+    TenGame.init(celebrate);
+    RpsGame.init(celebrate);
     MemoGame.init(celebrate);
     HiddenGame.init(celebrate);
     PatternGame.init(celebrate);
@@ -408,6 +442,10 @@
       else if ($('celebrate').dataset.game === 'coco') CocoGame.restart();
       else if ($('celebrate').dataset.game === 'ttt') TttGame.restart();
       else if ($('celebrate').dataset.game === 'words') WordsGame.start({});
+      else if ($('celebrate').dataset.game === 'bus') BusGame.start({});
+      else if ($('celebrate').dataset.game === 'monster') MonsterGame.start({});
+      else if ($('celebrate').dataset.game === 'ten') TenGame.start({});
+      else if ($('celebrate').dataset.game === 'rps') RpsGame.restart();
       else if ($('celebrate').dataset.game === 'memo') MemoGame.restart();
       else if ($('celebrate').dataset.game === 'hidden') HiddenGame.start({});
       else if ($('celebrate').dataset.game === 'pattern') PatternGame.start({});

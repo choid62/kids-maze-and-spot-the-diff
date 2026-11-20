@@ -37,11 +37,20 @@
           </div>
         </section>
         <section class="home-group">
+          <h2 class="group-title">🔢 Numbers <small>add &amp; take away</small></h2>
+          <div class="home-buttons">
+            <button class="tile busstop" data-go="bus"><canvas class="btn-art" data-art="bus"></canvas><span class="t-name">Bus Stop</span><small id="home-bus-level"></small></button>
+            <button class="tile monster" data-go="monster"><div class="btn-art monster-art" id="monster-art"></div><span class="t-name">Feed Me!</span><small id="home-monster-level"></small></button>
+            <button class="tile ten" data-go="ten"><canvas class="btn-art" data-art="ten"></canvas><span class="t-name">Make 10</span><small id="home-ten-level"></small></button>
+          </div>
+        </section>
+        <section class="home-group">
           <h2 class="group-title">🤖 Play Together <small>vs robot or a friend</small></h2>
           <div class="home-buttons">
             <button class="tile chop" data-go="chop"><div class="btn-art hands-art" id="chop-art"></div><span class="t-name">Chopsticks</span><small>Finger game</small></button>
             <button class="tile coco" data-go="coco"><canvas class="btn-art" data-art="coco"></canvas><span class="t-name">Coconut</span><small>Crack game</small></button>
             <button class="tile ttt" data-go="ttt"><canvas class="btn-art" data-art="ttt"></canvas><span class="t-name">Tic-Tac-Toe</span><small>Three in a row</small></button>
+            <button class="tile rps" data-go="rps"><div class="btn-art rps-art"><img src="assets/rps/scissors.svg" alt=""><img src="assets/rps/rock.svg" alt=""></div><span class="t-name">Rock Paper Scissors</span><small>First to 3</small></button>
           </div>
         </section>
       </div>
@@ -208,6 +217,95 @@
       </div>
     </section>
 
+    <section id="screen-bus" class="screen">
+      <header class="bar">
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid col"><button class="level-pill" id="bus-level" data-pick="bus" aria-label="Choose a level"></button><div class="dots" id="bus-dots"></div></div>
+        <button class="round-btn" id="bus-new" aria-label="New game">🔄</button>
+      </header>
+      <div class="bus-body">
+        <p class="bus-caption" id="bus-caption"></p>
+        <div class="bus-scene" id="bus-scene">
+          <div class="bus-world" id="bus-world">
+            <div class="bus-hills"></div>
+            <div class="bus-road"></div>
+            <div class="bus-walk"></div>
+            <div class="bus-sign" id="bus-sign"><span>BUS<br>STOP</span></div>
+            <div class="bus" id="bus-bus">
+              <div class="windows"></div>
+              <div class="front"></div>
+              <div class="stripe"></div>
+              <div class="wheel w1"></div><div class="wheel w2"></div>
+            </div>
+            <div class="tunnel" id="bus-tunnel"><div class="hole"></div></div>
+          </div>
+          <div class="bus-badge" id="bus-badge"></div>
+        </div>
+        <div class="bus-eq" id="bus-eq"></div>
+        <div class="bus-choices" id="bus-choices"></div>
+      </div>
+    </section>
+
+    <section id="screen-monster" class="screen">
+      <header class="bar">
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid col"><button class="level-pill" id="monster-level" data-pick="monster" aria-label="Choose a level"></button><div class="dots" id="monster-dots"></div></div>
+        <button class="round-btn" id="monster-new" aria-label="New game">🔄</button>
+      </header>
+      <div class="monster-body">
+        <div class="monster-top">
+          <div class="monster-wrap"><div class="monster-face" id="monster-face"></div><span class="monster-mouth" id="monster-mouth"></span></div>
+          <div class="monster-bubble"><p id="monster-say"></p><div class="want-row" id="monster-want"></div></div>
+        </div>
+        <div class="monster-table">
+          <div class="monster-jar" id="monster-jar"><span id="monster-jar-food"></span></div>
+          <div class="monster-plate" id="monster-plate"><div class="items" id="monster-items"></div><span class="count" id="monster-count"></span></div>
+        </div>
+        <p class="monster-tip" id="monster-tip"></p>
+        <div class="bus-eq show monster-eq" id="monster-eq"></div>
+        <div class="bus-choices" id="monster-choices"></div>
+      </div>
+    </section>
+
+    <section id="screen-ten" class="screen">
+      <header class="bar">
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid col"><button class="level-pill" id="ten-level" data-pick="ten" aria-label="Choose a level"></button></div>
+        <button class="round-btn" id="ten-new" aria-label="New game">🔄</button>
+      </header>
+      <div class="ten-body">
+        <p class="ten-ask">Find two that make <b id="ten-target">10</b></p>
+        <div class="ten-eq" id="ten-eq"></div>
+        <div class="ten-grid" id="ten-grid"></div>
+      </div>
+    </section>
+
+    <section id="screen-rps" class="screen">
+      <header class="bar">
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid"><button class="level-pill" id="rps-mode">Rock Paper Scissors</button></div>
+        <button class="round-btn" id="rps-new" aria-label="New game">🔄</button>
+      </header>
+      <div class="chop-menu" id="rps-menu">
+        <button class="big-btn rps mode" id="rps-cpu">🤖 vs Robot</button>
+        <button class="big-btn spot mode" id="rps-duo">👫 Two Players</button>
+        <p class="chop-rules">Pick rock ✊, paper ✋ or scissors ✌️.<br>Rock breaks scissors. Paper covers rock. Scissors cut paper.<br>First to 3 stars wins!</p>
+      </div>
+      <div class="rps-board hidden" id="rps-board">
+          <div class="rps-side" id="rps-top">
+            <div class="rps-hand"><img src="assets/rps/rock.svg" alt=""></div>
+            <div class="rps-picks"></div>
+            <div class="rps-info"><canvas class="rps-avatar"></canvas><span class="rps-stars"></span><span class="rps-msg"></span></div>
+          </div>
+          <div class="rps-mid"><div class="rps-call" id="rps-call"></div><div class="rps-why" id="rps-why"></div></div>
+          <div class="rps-side" id="rps-bottom">
+            <div class="rps-hand"><img src="assets/rps/rock.svg" alt=""></div>
+            <div class="rps-picks"></div>
+            <div class="rps-info"><canvas class="rps-avatar"></canvas><span class="rps-stars"></span><span class="rps-msg"></span></div>
+          </div>
+      </div>
+    </section>
+
     <section id="screen-stickers" class="screen">
       <header class="bar">
         <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
@@ -289,6 +387,12 @@
   <script src="js/ui-ttt.js"></script>
   <script src="js/words.js"></script>
   <script src="js/ui-words.js"></script>
+  <script src="js/numbers.js"></script>
+  <script src="js/ui-bus.js"></script>
+  <script src="js/ui-monster.js"></script>
+  <script src="js/ui-ten.js"></script>
+  <script src="js/rps.js"></script>
+  <script src="js/ui-rps.js"></script>
   <script src="js/memory.js"></script>
   <script src="js/ui-memo.js"></script>
   <script src="js/hidden.js"></script>
