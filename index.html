@@ -43,6 +43,8 @@
             <button class="tile busstop" data-go="bus"><canvas class="btn-art" data-art="bus"></canvas><span class="t-name">Bus Stop</span><small id="home-bus-level"></small></button>
             <button class="tile monster" data-go="monster"><div class="btn-art monster-art" id="monster-art"></div><span class="t-name">Feed Me!</span><small id="home-monster-level"></small></button>
             <button class="tile ten" data-go="ten"><canvas class="btn-art" data-art="ten"></canvas><span class="t-name">Make 10</span><small id="home-ten-level"></small></button>
+            <!-- 정원 수학: 다듬는 중이라 홈에서 숨김 (주소 끝에 #gmath 로 열 수 있음)
+            <button class="tile gmath" data-go="gmath"><canvas class="btn-art" data-art="gmath"></canvas><span class="t-name">Garden Math</span><small id="home-gmath-level"></small></button> -->
           </div>
         </section>
         <section class="home-group">
@@ -334,6 +336,20 @@
       </div>
     </section>
 
+    <section id="screen-gmath" class="screen">
+      <header class="bar">
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid col"><button class="level-pill" id="gmath-level" data-pick="gmath" aria-label="Choose a level"></button><div class="dots" id="gmath-dots"></div></div>
+        <button class="round-btn" id="gmath-new" aria-label="New game">🔄</button>
+      </header>
+      <div class="gmath-body">
+        <p class="grow-caption gmath-caption" id="gmath-caption"></p>
+        <div class="gmath-stage" id="gmath-stage"><canvas id="gmath-canvas"></canvas><div class="gmath-layer" id="gmath-layer"></div></div>
+        <div class="bus-eq show gmath-eq" id="gmath-eq"></div>
+        <div class="bus-choices gmath-choices" id="gmath-choices"></div>
+      </div>
+    </section>
+
     <section id="screen-stickers" class="screen">
       <header class="bar">
         <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
@@ -429,6 +445,8 @@
   <script src="js/ui-rps.js"></script>
   <script src="js/garden.js"></script>
   <script src="js/ui-grow.js"></script>
+  <script src="js/gmath.js"></script>
+  <script src="js/ui-gmath.js"></script>
   <script src="js/memory.js"></script>
   <script src="js/ui-memo.js"></script>
   <script src="js/hidden.js"></script>

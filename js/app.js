@@ -1,7 +1,7 @@
 // 화면 전환, 홈, 축하, 스티커 북, 부모 설정
 (function (root) {
   const $ = (id) => document.getElementById(id);
-  const SCREENS = ['home', 'maze', 'spot', 'hidden', 'memo', 'pattern', 'chop', 'coco', 'ttt', 'words', 'bus', 'monster', 'ten', 'rps', 'grow', 'stickers'];
+  const SCREENS = ['home', 'maze', 'spot', 'hidden', 'memo', 'pattern', 'chop', 'coco', 'ttt', 'words', 'bus', 'monster', 'ten', 'rps', 'grow', 'gmath', 'stickers'];
   // [화면 글자, 영어 목소리]
   const CHEERS = [['Good job!', 'Good job!'], ['Awesome!', 'Awesome!'], ['Amazing!', 'Amazing!'], ['Great!', 'Great!'], ['You did it!', 'You did it!']];
   const STICKER_KINDS = Object.keys(EMOJI);
@@ -30,6 +30,7 @@
     if (current === 'words' && name !== 'words') WordsGame.stop();
     if (current === 'bus' && name !== 'bus') BusGame.stop();
     if (current === 'monster' && name !== 'monster') MonsterGame.stop();
+    if (current === 'gmath' && name !== 'gmath') GardenMathGame.stop();
     if (current === 'ten' && name !== 'ten') TenGame.stop();
     if (current === 'rps' && name !== 'rps') RpsGame.stop();
     if (current === 'grow' && name !== 'grow') GrowGame.stop();
@@ -50,6 +51,7 @@
     else if (name === 'words') WordsGame.start(opts);
     else if (name === 'bus') BusGame.start(opts);
     else if (name === 'monster') MonsterGame.start(opts);
+    else if (name === 'gmath') GardenMathGame.start(opts);
     else if (name === 'ten') TenGame.start(opts);
     else if (name === 'rps') RpsGame.enter(opts);
     else if (name === 'grow') GrowGame.start(opts);
@@ -90,7 +92,7 @@
     $('home-memo-level').textContent = 'Level ' + Store.get('memoLevel');
     $('home-pattern-level').textContent = 'Level ' + Store.get('patternLevel');
     $('home-words-level').textContent = 'Level ' + Store.get('wordsLevel');
-    for (const g of ['bus', 'monster', 'ten']) $('home-' + g + '-level').textContent = 'Level ' + Store.get(g + 'Level');
+    for (const g of ['bus', 'monster', 'ten', 'gmath']) if ($('home-' + g + '-level')) $('home-' + g + '-level').textContent = 'Level ' + Store.get(g + 'Level');
     $('monster-art').innerHTML = MonsterGame.monsterSVG('hungry', '#8E6BE8');
     $('chop-art').innerHTML = ChopGame.handSVG(2, true) + ChopGame.handSVG(3, false);
     document.querySelectorAll('canvas.btn-art').forEach((c) => {
@@ -104,6 +106,7 @@
       else if (c.dataset.art === 'words') drawWordsArt(ctx, w, h);
       else if (c.dataset.art === 'bus') Draw.object(ctx, 'bus', w / 2, h / 2, w * 0.8);
       else if (c.dataset.art === 'ten') drawTenArt(ctx, w, h);
+      else if (c.dataset.art === 'gmath') drawGmathArt(ctx, w, h);
       else if (c.dataset.art === 'grow') Draw.object(ctx, 'potted_plant', w / 2, h / 2, w * 0.8);
       else drawSpotArt(ctx, w, h);
     });
@@ -122,6 +125,12 @@
     ctx.fillText('7', w * 0.78, h * 0.36);
     ctx.fillStyle = '#3C9A2E';
     ctx.fillText('= 10', w * 0.5, h * 0.74);
+  }
+
+  // 사과나무
+  function drawGmathArt(ctx, w, h) {
+    Draw.object(ctx, 'deciduous_tree', w * 0.5, h * 0.5, w * 0.86);
+    for (const [x, y] of [[0.34, 0.34], [0.62, 0.26], [0.55, 0.5], [0.3, 0.56]]) Draw.object(ctx, 'red_apple', w * x, h * y, w * 0.18);
   }
 
   // 단어 "cat" 과 고양이 그림이 줄로 이어진 모습
@@ -327,6 +336,7 @@
     words: { key: 'wordsLevel', max: () => Words.MAX_LEVEL, name: 'Words', go: () => WordsGame.start({}) },
     bus: { key: 'busLevel', max: () => Numbers.BUS_MAX_LEVEL, name: 'Bus Stop', go: () => BusGame.start({}) },
     monster: { key: 'monsterLevel', max: () => Numbers.MONSTER_MAX_LEVEL, name: 'Feed Me!', go: () => MonsterGame.start({}) },
+    gmath: { key: 'gmathLevel', max: () => GardenMath.MAX_LEVEL, name: 'Garden Math', go: () => GardenMathGame.start({}) },
     ten: { key: 'tenLevel', max: () => Numbers.TEN_MAX_LEVEL, name: 'Make 10', go: () => TenGame.start({}) },
   };
 
@@ -480,6 +490,7 @@
     WordsGame.init(celebrate);
     BusGame.init(celebrate);
     MonsterGame.init(celebrate);
+    GardenMathGame.init(celebrate);
     TenGame.init(celebrate);
     RpsGame.init(celebrate);
     GrowGame.init(celebrate);
@@ -523,6 +534,7 @@
       else if ($('celebrate').dataset.game === 'words') WordsGame.start({});
       else if ($('celebrate').dataset.game === 'bus') BusGame.start({});
       else if ($('celebrate').dataset.game === 'monster') MonsterGame.start({});
+      else if ($('celebrate').dataset.game === 'gmath') GardenMathGame.start({});
       else if ($('celebrate').dataset.game === 'ten') TenGame.start({});
       else if ($('celebrate').dataset.game === 'rps') RpsGame.restart();
       else if ($('celebrate').dataset.game === 'grow') GrowGame.start({});

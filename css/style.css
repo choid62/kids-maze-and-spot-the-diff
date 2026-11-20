@@ -716,3 +716,33 @@ button.level-pill { border: none; font-family: inherit; color: var(--ink); curso
 .level-choice .big-btn { flex: none; font-size: 20px; padding: 12px 18px; justify-content: center; }
 .level-choice .again { background: #4FAEF2; }
 .level-choice .up { background: #FF8A3D; }
+
+/* ---------- 정원 수학 ---------- */
+.tile.gmath { background: #3FA36B; }
+.gmath-body { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 4px 12px 16px; min-height: 0; }
+.gmath-caption { min-height: 2.6em; font-size: clamp(19px, 3.8vw, 28px); }
+.gmath-stage { position: relative; flex: 1; width: 100%; max-width: 960px; min-height: 180px; border-radius: 28px; overflow: hidden; box-shadow: inset 0 0 0 4px #fff; }
+.gmath-stage canvas { display: block; }
+.gmath-layer { position: absolute; inset: 0; pointer-events: none; }
+.gm-item, .gm-fly { position: absolute; left: 0; top: 0; }
+.gm-fly { z-index: 5; }
+.gm-item > img, .gm-fly > img, .gm-item > svg, .gm-fly > svg { width: 100%; height: 100%; display: block; }
+.gm-item.pop > :first-child { animation: pop 0.3s ease-out; }
+.gm-item.ghost > :first-child { opacity: 0.45; }
+.gm-item.mark::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 4px dashed #E05C5C; }
+.gm-seed { display: block; width: 62%; height: 90%; margin: 5% auto 0; border-radius: 50%; background: #4A3423; box-shadow: inset 3px 0 0 #E9D2B0; }
+.gm-hole { display: block; width: 100%; height: 50%; margin-top: 30%; border-radius: 50%; background: #5C3B1E; box-shadow: inset 0 4px 0 rgba(0, 0, 0, 0.25); }
+.gm-bud { display: block; width: 60%; height: 75%; margin: 12% auto 0; border-radius: 50% 50% 45% 45%; background: #8CCB4E; box-shadow: inset 0 -6px 0 #5E9E33; }
+.gm-pack { display: flex; align-items: center; justify-content: center; gap: 6%; width: 78%; height: 100%; margin: 0 auto; border-radius: 10px 10px 16px 16px; background: #FFF1D6; box-shadow: inset 0 0 0 4px #E8C891; }
+.gm-pack .gm-seed { width: 22%; height: 30%; margin: 0; }
+.gm-tag { position: absolute; top: -26px; left: 50%; transform: translateX(-50%); min-width: 34px; height: 34px; padding: 0 6px; border-radius: 17px; background: #3D3355; color: #fff; font-size: 22px; font-weight: 900; display: flex; align-items: center; justify-content: center; z-index: 2; }
+.gm-tag.plus { background: #2FA866; }
+.gm-tag.minus { background: #E05C5C; }
+.gm-float { top: 0; left: 0; z-index: 6; animation: gm-up 0.9s ease-out forwards; }
+@keyframes gm-up { to { margin-top: -40px; opacity: 0; } }
+.gm-basket b { position: absolute; right: -6px; top: -6px; min-width: 36px; height: 36px; border-radius: 18px; background: #FF8A3D; color: #fff; font-size: 22px; display: flex; align-items: center; justify-content: center; }
+.gmath-eq { min-height: 72px; font-size: clamp(36px, 7vw, 56px); }
+.gm-choice .gm-ico { display: block; width: var(--icon); height: var(--icon); }
+.gm-choice .gm-ico > img, .gm-choice .gm-ico > svg { width: 100%; height: 100%; display: block; }
+.gm-choice .gm-ico .gm-seed { width: 55%; height: 80%; }
+#screen-gmath.speaking .gm-choice { opacity: 0.55; }
