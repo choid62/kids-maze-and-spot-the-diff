@@ -29,7 +29,7 @@
     }
     S.scene = Scene.generate(level, seed, theme);
     S.lastTheme = S.scene.theme;
-    document.getElementById('spot-level').textContent = `레벨 ${level} · ${Core.levelName(level)} ▾`;
+    document.getElementById('spot-level').textContent = `Level ${level} · ${Core.levelName(level)} ▾`;
     S.found = new Set();
     S.foundAt = new Map();
     S.ripples = [];

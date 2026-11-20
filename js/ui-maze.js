@@ -51,7 +51,7 @@
     S.pos = { x: end.x, y: end.y };
     S.t0 = performance.now();
     S.nudgeUntil = S.t0 + 1500; // 처음에 캐릭터를 살짝 흔들어 어디서 시작하는지 알려 준다
-    document.getElementById('maze-level').textContent = `레벨 ${level} · ${Core.levelName(level)} ▾`;
+    document.getElementById('maze-level').textContent = `Level ${level} · ${Core.levelName(level)} ▾`;
     relayout();
     S.active = true;
     cancelAnimationFrame(S.raf);

@@ -2,7 +2,7 @@
 // 코코넛은 큰 원 위에 시계 방향 순서대로 놓이고, 모두 원의 가운데를 바라본다.
 // 시작 고르기: 내 코코넛을 누르고 → 같은 코코넛을 한 번 더 누르면 거기서부터, 바로 다음 코코넛을 누르면 그 옆에서부터 센다.
 (function (root) {
-  const LEVEL_NAMES = ['', '쉬움', '보통', '어려움'];
+  const LEVEL_NAMES = ['', 'Easy', 'Medium', 'Hard'];
   const WORDS = ['Coco', 'nut', 'Coco', 'nut', 'Coco', 'nut', 'Crack!'];
   const BEAT_MS = 450; // 한 박자
   const MAX_ROUNDS = 80; // 합치기 때문에 끝없이 이어질 수 있어 이만큼 걸리면 비김
@@ -65,7 +65,7 @@
     stop();
     $('coco-menu').classList.remove('hidden');
     $('coco-board').classList.add('hidden');
-    $('coco-mode').textContent = '코코넛 크랙';
+    $('coco-mode').textContent = 'Coconut Crack';
     renderMenu();
   }
 
@@ -195,7 +195,7 @@
       el.className = 'seat' + (!S.over && g.counter === p ? ' counter' : '') + (gone ? ' gone' : '');
       el.style.left = L.cx + far * Math.cos(a) + 'px';
       el.style.top = L.cy + far * Math.sin(a) + 'px';
-      el.innerHTML = '<canvas></canvas><span class="pointer">👆</span>' + (gone ? '<span class="out-label">탈락</span>' : '');
+      el.innerHTML = '<canvas></canvas><span class="pointer">👆</span>' + (gone ? '<span class="out-label">Out</span>' : '');
       table.appendChild(el);
       const c = el.querySelector('canvas');
       const dpr = Math.min(root.devicePixelRatio || 1, 3);
@@ -228,7 +228,7 @@
       S.busy = false;
       const canMerge = Coconut.canMerge(g, 0);
       $('coco-merge').classList.toggle('hidden', !canMerge);
-      say(canMerge ? '합칠 수 있어요!' : '내 코코넛을 골라요');
+      say(canMerge ? 'You can join!' : 'Pick your coconut');
       render();
     } else {
       S.busy = true;
@@ -239,8 +239,8 @@
         render();
         popSeat(c);
         Sound.found();
-        say('합쳤다!');
-      } else say('생각하는 중…');
+        say('Joined!');
+      } else say('Thinking…');
       later(() => {
         const start = Coconut.cpuChoice(g, c, Store.get('cocoLevel') || 1, 0);
         // 어느 코코넛으로 시작하는지 보여 준다: 자기 코코넛을 고르고, 시작점을 짚는다
@@ -248,7 +248,7 @@
         const own = list[start].p === c ? start : (start - 1 + list.length) % list.length;
         S.selected = own;
         render();
-        say(own === start ? '여기서부터!' : '옆에서부터!');
+        say(own === start ? 'Start here!' : 'Start next door!');
         later(() => count(start), 900);
       }, merged ? 1300 : 900);
     }
@@ -263,7 +263,7 @@
     $('coco-merge').classList.add('hidden');
     render();
     popSeat(0);
-    say('합쳤다! 내 코코넛을 골라요');
+    say('Joined! Pick your coconut');
   }
 
   // 그 사람의 코코넛을 반짝
@@ -288,7 +288,7 @@
       if (!mineAt) return shake(i);
       S.selected = i;
       Sound.tap();
-      say('한 번 더, 또는 옆을 눌러요');
+      say('Tap again, or tap the next one');
       return render();
     }
     const next = (S.selected + 1) % list.length;
@@ -340,7 +340,7 @@
       const what = Coconut.hit(g, t);
       S.selected = null;
       render();
-      const msg = { crack: '쩍! 코코넛이 갈라졌어요', spill: '앗, 코코넛 우유가 쏟아졌어요', gone: '코코넛이 사라졌어요', out: '탈락!' }[what];
+      const msg = { crack: 'Crack! It split open', spill: 'Oops, the milk spilled', gone: 'The coconut is gone', out: 'Out!' }[what];
       say(msg);
       if (what === 'crack') Sound.found();
       // 갈라진 경우 두 반쪽 모두 반짝
@@ -360,9 +360,9 @@
     render();
     $('coco-merge').classList.add('hidden');
     // w: 이긴 자리, -1 내가 탈락, -2 너무 길어져 비김, -3 똑같이 하나씩 남아 비김
-    say(w === 0 ? '내가 이겼다!' : w === -3 ? '똑같이 하나씩! 비겼어요' : w === -2 ? '비겼어요!' : '아쉽다!');
+    say(w === 0 ? 'I won!' : w === -3 ? 'Same shape each! It\'s a tie' : w === -2 ? 'It\'s a tie!' : 'So close!');
     const tie = { speech: 'It is a tie!', noSticker: true, sad: true };
-    const result = w === 0 ? {} : w === -3 ? Object.assign({ text: '똑같이 하나씩! 비겼어요' }, tie) : w === -2 ? Object.assign({ text: '비겼어요!' }, tie) : { text: '아쉽다! 다시 해 볼까?', speech: 'Oh no! Try again!', noSticker: true, sad: true };
+    const result = w === 0 ? {} : w === -3 ? Object.assign({ text: 'Same shape each! It\'s a tie' }, tie) : w === -2 ? Object.assign({ text: 'It\'s a tie!' }, tie) : { text: 'So close! Try again?', speech: 'Oh no! Try again!', noSticker: true, sad: true };
     later(() => S.onEnd('coco', 0, result), 900);
   }
 

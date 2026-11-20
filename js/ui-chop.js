@@ -2,7 +2,7 @@
 // 아래쪽 = 사람(0번), 위쪽 = 로봇 또는 다른 사람(1번).
 (function (root) {
   const SKILL = [0, 0.3, 0.7, 1]; // 로봇이 최선의 수를 고를 확률 (쉬움/보통/어려움)
-  const LEVEL_NAMES = ['', '쉬움', '보통', '어려움'];
+  const LEVEL_NAMES = ['', 'Easy', 'Medium', 'Hard'];
   const MAX_MOVES = 100; // 이만큼 두어도 안 끝나면 비김
   const AVATAR = { me: 'rabbit_face', cpu: 'robot', friend: 'teddy_bear' };
 
@@ -85,7 +85,7 @@
     stop();
     $('chop-menu').classList.remove('hidden');
     $('chop-board').classList.add('hidden');
-    $('chop-mode').textContent = '젓가락 놀이';
+    $('chop-mode').textContent = 'Chopsticks';
     renderMenu();
   }
 
@@ -101,7 +101,7 @@
     $('chop-board').classList.remove('hidden');
     $('chop-board').classList.toggle('duo', mode === 'duo');
     const lv = Store.get('chopLevel') || 1;
-    $('chop-mode').textContent = mode === 'cpu' ? `로봇 · ${LEVEL_NAMES[lv]} ▾` : '둘이서 ▾';
+    $('chop-mode').textContent = mode === 'cpu' ? `Robot · ${LEVEL_NAMES[lv]} ▾` : 'Two Players ▾';
     drawAvatar('chop-avatar-0', AVATAR.me);
     drawAvatar('chop-avatar-1', mode === 'cpu' ? AVATAR.cpu : AVATAR.friend);
     S.cpuStarts = false;
@@ -152,7 +152,7 @@
       });
       const msg = side.querySelector('.turn-msg');
       if (S.over) msg.textContent = '';
-      else if (S.turn === p) msg.textContent = p === 1 && S.mode === 'cpu' ? '로봇이 생각하는 중…' : '내 차례!';
+      else if (S.turn === p) msg.textContent = p === 1 && S.mode === 'cpu' ? 'Robot is thinking…' : 'Your turn!';
       else msg.textContent = '';
       side.querySelector('.split-btn').disabled = S.over || S.turn !== p || !Chop.splits(S.hands[p]).length;
     }
@@ -388,7 +388,7 @@
               fill(slots[2], sum);
               slots[2].classList.add('show');
               if (dead) {
-                eq.querySelector('.eq-note').textContent = `${Chop.DEAD_AT}개 이상이면 그 손은 쉬어요`;
+                eq.querySelector('.eq-note').textContent = `${Chop.DEAD_AT} or more: that hand is out`;
                 Sound.bump();
               } else Sound.found();
               // ④ 손이 손을 톡! 치고 돌아온 뒤 ⑤ 답이 맞는 손으로 날아간다 (식은 그대로 남는다)
@@ -438,9 +438,9 @@
     S.busy = false;
     render();
     let result;
-    if (winner === -1) result = { text: '비겼어요!', speech: 'It is a tie!', noSticker: true, sad: true };
-    else if (S.mode === 'cpu') result = winner === 0 ? {} : { text: '아쉽다! 다시 해 볼까?', speech: 'Oh no! Try again!', noSticker: true, sad: true };
-    else result = { text: winner === 0 ? '아래쪽 승리!' : '위쪽 승리!', speech: winner === 0 ? 'Bottom wins!' : 'Top wins!', noSticker: true };
+    if (winner === -1) result = { text: 'It\'s a tie!', speech: 'It is a tie!', noSticker: true, sad: true };
+    else if (S.mode === 'cpu') result = winner === 0 ? {} : { text: 'So close! Try again?', speech: 'Oh no! Try again!', noSticker: true, sad: true };
+    else result = { text: winner === 0 ? 'Bottom wins!' : 'Top wins!', speech: winner === 0 ? 'Bottom wins!' : 'Top wins!', noSticker: true };
     later(() => S.onEnd('chop', 0, result), 700);
   }
 

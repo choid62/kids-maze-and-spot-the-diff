@@ -77,13 +77,21 @@ test('숨은그림: 찾을 물건은 앞 물건에 가려지지 않고, 그 자�
   }
 });
 
-test('숨은그림: 레벨 7부터는 같은 그림의 다른 색이 섞인다', () => {
-  let decoys = 0;
-  for (let seed = 1; seed <= 30; seed++) {
-    const g = Hidden.generate(8, seed, 1.33);
-    for (const o of g.objects) if (o.target < 0 && g.targets.some((t) => t.face.kind === o.kind)) decoys++;
+test('숨은그림: 찾을 물건은 3글자 영어 단어이고, 같은 그림의 방해 물건은 없다', () => {
+  const words = new Set();
+  for (let seed = 1; seed <= 80; seed++) {
+    const g = Hidden.generate(1 + (seed % 10), seed, 1.33);
+    for (const t of g.targets) {
+      words.add(t.word);
+      assert.match(t.word, /^[a-z]{3}$/);
+      assert.strictEqual(t.face.hue, 0);
+      assert.ok(g.objects.filter((o) => o.kind === t.face.kind).every((o) => o.target >= 0), t.word + ': 같은 그림의 방해 물건');
+    }
+    assert.strictEqual(new Set(g.targets.map((t) => t.word)).size, g.targets.length);
+    const groups = g.targets.map((t) => t.g).filter(Boolean);
+    assert.strictEqual(new Set(groups).size, groups.length, '비슷해 보이는 그림이 함께 나옴');
   }
-  assert.ok(decoys > 10, `헷갈리는 물건 ${decoys}개`);
+  assert.ok(words.size >= 25, '단어 ' + words.size + '가지');
 });
 
 // ---------- 다음에 올 것 ----------

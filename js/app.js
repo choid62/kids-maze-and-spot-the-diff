@@ -1,9 +1,9 @@
 // 화면 전환, 홈, 축하, 스티커 북, 부모 설정
 (function (root) {
   const $ = (id) => document.getElementById(id);
-  const SCREENS = ['home', 'maze', 'spot', 'hidden', 'memo', 'pattern', 'chop', 'coco', 'ttt', 'stickers'];
+  const SCREENS = ['home', 'maze', 'spot', 'hidden', 'memo', 'pattern', 'chop', 'coco', 'ttt', 'words', 'stickers'];
   // [화면 글자, 영어 목소리]
-  const CHEERS = [['잘했어!', 'Good job!'], ['최고야!', 'Awesome!'], ['대단해!', 'Amazing!'], ['멋져!', 'Great!'], ['해냈다!', 'You did it!']];
+  const CHEERS = [['Good job!', 'Good job!'], ['Awesome!', 'Awesome!'], ['Amazing!', 'Amazing!'], ['Great!', 'Great!'], ['You did it!', 'You did it!']];
   const STICKER_KINDS = Object.keys(EMOJI);
   let current = null;
 
@@ -27,6 +27,7 @@
     if (current === 'chop' && name !== 'chop') ChopGame.stop();
     if (current === 'coco' && name !== 'coco') CocoGame.stop();
     if (current === 'ttt' && name !== 'ttt') TttGame.stop();
+    if (current === 'words' && name !== 'words') WordsGame.stop();
     if (current === 'memo' && name !== 'memo') MemoGame.stop();
     if (current === 'hidden' && name !== 'hidden') HiddenGame.stop();
     if (current === 'pattern' && name !== 'pattern') PatternGame.stop();
@@ -40,6 +41,7 @@
     else if (name === 'chop') ChopGame.enter(opts);
     else if (name === 'coco') CocoGame.enter(opts);
     else if (name === 'ttt') TttGame.enter(opts);
+    else if (name === 'words') WordsGame.start(opts);
     else if (name === 'memo') MemoGame.enter(opts);
     else if (name === 'hidden') HiddenGame.start(opts);
     else if (name === 'pattern') PatternGame.start(opts);
@@ -70,11 +72,12 @@
 
   function renderHome() {
     $('star-count').textContent = Store.get('stickers').length;
-    $('home-maze-level').textContent = '레벨 ' + Store.get('mazeLevel');
-    $('home-spot-level').textContent = '레벨 ' + Store.get('spotLevel');
-    $('home-hidden-level').textContent = '레벨 ' + Store.get('hiddenLevel');
-    $('home-memo-level').textContent = '레벨 ' + Store.get('memoLevel');
-    $('home-pattern-level').textContent = '레벨 ' + Store.get('patternLevel');
+    $('home-maze-level').textContent = 'Level ' + Store.get('mazeLevel');
+    $('home-spot-level').textContent = 'Level ' + Store.get('spotLevel');
+    $('home-hidden-level').textContent = 'Level ' + Store.get('hiddenLevel');
+    $('home-memo-level').textContent = 'Level ' + Store.get('memoLevel');
+    $('home-pattern-level').textContent = 'Level ' + Store.get('patternLevel');
+    $('home-words-level').textContent = 'Level ' + Store.get('wordsLevel');
     $('chop-art').innerHTML = ChopGame.handSVG(2, true) + ChopGame.handSVG(3, false);
     document.querySelectorAll('canvas.btn-art').forEach((c) => {
       const { ctx, w, h } = sizeCanvas(c);
@@ -84,8 +87,23 @@
       else if (c.dataset.art === 'pattern') drawPatternArt(ctx, w, h);
       else if (c.dataset.art === 'coco') Draw.object(ctx, 'coconut', w / 2, h / 2, w * 0.72, null, false, { recolor: { '#D3D3D3': '#FFFFFF', '#9B9B9B': '#FFF6E6' } });
       else if (c.dataset.art === 'ttt') drawTttArt(ctx, w, h);
+      else if (c.dataset.art === 'words') drawWordsArt(ctx, w, h);
       else drawSpotArt(ctx, w, h);
     });
+  }
+
+  // 단어 "cat" 과 고양이 그림이 줄로 이어진 모습
+  function drawWordsArt(ctx, w, h) {
+    ctx.fillStyle = '#5A4A8A';
+    ctx.font = `900 ${Math.round(w * 0.24)}px system-ui, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('cat', w * 0.27, h * 0.34);
+    ctx.strokeStyle = '#FF8A3D';
+    ctx.lineWidth = w * 0.05;
+    ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(w * 0.3, h * 0.52); ctx.quadraticCurveTo(w * 0.35, h * 0.75, w * 0.52, h * 0.66); ctx.stroke();
+    Draw.object(ctx, 'cat', w * 0.72, h * 0.62, w * 0.46);
   }
 
   // 3x3 판에 토끼 셋이 대각선 한 줄, 로봇 둘
@@ -196,7 +214,7 @@
     const speech = opts.text ? opts.speech : cheer[1]; // 목소리는 영어
     $('cheer-text').textContent = text;
     $('levelup').classList.toggle('hidden', !newLevel);
-    if (newLevel) $('levelup').textContent = `레벨 업! 이제 레벨 ${newLevel}`;
+    if (newLevel) $('levelup').textContent = `Level up! Now Level ${newLevel}`;
     open('celebrate');
     $('sticker-prize').classList.toggle('hidden', !sticker);
     if (sticker) {
@@ -255,16 +273,17 @@
   }
 
   // ---------- 레벨 고르기 ----------
-  const TIERS = [[3, '쉬움', 't1'], [6, '보통', 't2'], [8, '어려움', 't3'], [10, '아주 어려움', 't4'], [15, '최고', 't5']];
+  const TIERS = [[3, 'Easy', 't1'], [6, 'Medium', 't2'], [8, 'Hard', 't3'], [10, 'Very Hard', 't4'], [15, 'Expert', 't5']];
   const tierOf = (lv) => TIERS.find((t) => lv <= t[0]);
 
   // 레벨이 있는 놀이: 저장 이름, 최고 레벨, 이름, 레벨을 고른 뒤 할 일
   const LEVEL_GAMES = {
-    maze: { key: 'mazeLevel', max: () => MazeGame.MAX_LEVEL, name: '미로', go: () => MazeGame.start({}) },
-    spot: { key: 'spotLevel', max: () => SpotGame.MAX_LEVEL, name: '틀린그림', go: () => SpotGame.start({}) },
-    hidden: { key: 'hiddenLevel', max: () => Hidden.MAX_LEVEL, name: '숨은그림', go: () => HiddenGame.start({}) },
-    memo: { key: 'memoLevel', max: () => Memory.MAX_LEVEL, name: '짝 맞추기', go: () => MemoGame.startSolo() },
-    pattern: { key: 'patternLevel', max: () => Pattern.MAX_LEVEL, name: '다음은?', go: () => PatternGame.start({}) },
+    maze: { key: 'mazeLevel', max: () => MazeGame.MAX_LEVEL, name: 'Maze', go: () => MazeGame.start({}) },
+    spot: { key: 'spotLevel', max: () => SpotGame.MAX_LEVEL, name: 'Spot It', go: () => SpotGame.start({}) },
+    hidden: { key: 'hiddenLevel', max: () => Hidden.MAX_LEVEL, name: 'Hidden', go: () => HiddenGame.start({}) },
+    memo: { key: 'memoLevel', max: () => Memory.MAX_LEVEL, name: 'Memory', go: () => MemoGame.startSolo() },
+    pattern: { key: 'patternLevel', max: () => Pattern.MAX_LEVEL, name: 'What\'s Next?', go: () => PatternGame.start({}) },
+    words: { key: 'wordsLevel', max: () => Words.MAX_LEVEL, name: 'Words', go: () => WordsGame.start({}) },
   };
 
   function openLevels(game) {
@@ -272,7 +291,7 @@
     const key = info.key;
     const max = info.max();
     const now = Store.get(key);
-    $('levels-title').textContent = info.name + ' 레벨 고르기';
+    $('levels-title').textContent = info.name + ': choose a level';
     const grid = $('level-grid');
     grid.innerHTML = '';
     for (let lv = 1; lv <= max; lv++) {
@@ -325,7 +344,7 @@
     const toggle = (key) => {
       const btn = $('set-' + key);
       const on = Store.get(key);
-      btn.textContent = on ? '켜짐' : '꺼짐';
+      btn.textContent = on ? 'On' : 'Off';
       btn.className = 'pill ' + (on ? 'on' : 'off');
     };
     toggle('sound');
@@ -348,7 +367,7 @@
       });
     });
     $('set-reset').addEventListener('click', () => {
-      if (confirm('스티커와 단계를 모두 처음으로 되돌릴까요?')) {
+      if (confirm('Reset all stickers and levels?')) {
         const sound = Store.get('sound'), voice = Store.get('voice');
         Store.reset();
         Store.set('sound', sound);
@@ -366,6 +385,7 @@
     ChopGame.init(celebrate);
     CocoGame.init(celebrate);
     TttGame.init(celebrate);
+    WordsGame.init(celebrate);
     MemoGame.init(celebrate);
     HiddenGame.init(celebrate);
     PatternGame.init(celebrate);
@@ -387,6 +407,7 @@
       else if ($('celebrate').dataset.game === 'chop') ChopGame.restart();
       else if ($('celebrate').dataset.game === 'coco') CocoGame.restart();
       else if ($('celebrate').dataset.game === 'ttt') TttGame.restart();
+      else if ($('celebrate').dataset.game === 'words') WordsGame.start({});
       else if ($('celebrate').dataset.game === 'memo') MemoGame.restart();
       else if ($('celebrate').dataset.game === 'hidden') HiddenGame.start({});
       else if ($('celebrate').dataset.game === 'pattern') PatternGame.start({});

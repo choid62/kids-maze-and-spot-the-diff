@@ -29,7 +29,7 @@
     S.ripples = [];
     S.sparks = [];
     S.lastActivity = performance.now();
-    $('hidden-level').textContent = `레벨 ${level} · ${Core.levelName(level)} ▾`;
+    $('hidden-level').textContent = `Level ${level} · ${Core.levelName(level)} ▾`;
     buildTargets();
     layout();
     draw();
@@ -45,7 +45,7 @@
     cancelAnimationFrame(S.raf);
   }
 
-  // 위쪽 목록: 찾을 그림과 남은 수
+  // 위쪽 목록: 찾을 물건의 영어 단어와 찾은 수
   function buildTargets() {
     const box = $('hidden-targets');
     box.innerHTML = '';
@@ -53,14 +53,9 @@
       const chip = document.createElement('span');
       chip.className = 'target';
       chip.dataset.t = ti;
-      chip.innerHTML = '<canvas></canvas><b></b>';
+      chip.innerHTML = '<span class="word"></span><b></b>';
+      chip.querySelector('.word').textContent = t.word;
       box.appendChild(chip);
-      const c = chip.querySelector('canvas');
-      const dpr = Math.min(root.devicePixelRatio || 1, 3);
-      c.width = c.height = 34 * dpr;
-      const ctx = c.getContext('2d');
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      Draw.object(ctx, t.face.kind, 17, 17, 30, null, false, { hue: t.face.hue });
     });
     updateTargets();
   }

@@ -22,7 +22,7 @@
     S.qs = Pattern.round(level, opts.seed != null ? opts.seed : Core.newSeed());
     S.qi = 0;
     S.firstTry = 0;
-    $('pattern-level').textContent = `레벨 ${level} · ${Core.levelName(level)} ▾`;
+    $('pattern-level').textContent = `Level ${level} · ${Core.levelName(level)} ▾`;
     show();
     if (opts.demo === 'patternplay') autoPlay();
   }

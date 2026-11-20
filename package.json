@@ -5,7 +5,7 @@
   "description": "5살 아이를 위한 자동 생성 미로, 틀린그림 찾기, 젓가락 놀이, 코코넛 크랙 (PWA)",
   "scripts": {
     "start": "node tools/serve.js",
-    "test": "node --test tests/maze.test.js tests/scene.test.js tests/chop.test.js tests/coconut.test.js tests/games.test.js tests/tictactoe.test.js",
+    "test": "node --test tests/maze.test.js tests/scene.test.js tests/chop.test.js tests/coconut.test.js tests/games.test.js tests/tictactoe.test.js tests/words.test.js",
     "icons": "node tools/make-icons.js"
   }
 }

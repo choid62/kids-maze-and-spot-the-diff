@@ -25,4 +25,7 @@ module.exports = [
   'Flamingo', 'Parrot', 'Peacock', 'Owl', 'Palm tree', 'Cactus',
   // 코코넛 놀이
   'Coconut',
+  // 숨은그림: 3글자 영어 단어로 찾는 물건 (js/words.js 의 3글자 단어와 같은 그림)
+  'Ant', 'Fox', 'Bat', 'Egg', 'Top hat', 'Key', 'Bus', 'Ram', 'Cup with straw', 'Package', 'Gem stone',
+  'Bug', 'Pen', 'Bed', 'Pie', 'Rat', 'Axe', 'Carpentry saw', 'Fly', 'Spider web', 'Jar', 'Minibus', 'Wood', 'Chestnut',
 ];

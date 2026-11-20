@@ -1,4 +1,4 @@
-// 숨은그림 찾기 규칙. 장면 하나에 물건을 늘어놓고, 위쪽 목록의 물건(그림+색)을 정해진 수만큼 찾는다.
+// 숨은그림 찾기 규칙. 장면 하나에 물건을 늘어놓고, 위쪽 목록의 물건(3글자 영어 단어로 표시)을 정해진 수만큼 찾는다.
 // 좌표: x, y는 그림 안 0~1 비율, size는 그림 높이 대비 비율. aspect = 그림 너비 / 높이.
 (function (root) {
   const isNode = typeof module !== 'undefined' && module.exports;
@@ -6,9 +6,10 @@
   const Scene = isNode ? require('./scene.js') : root.Scene;
   const Faces = isNode ? require('./faces.js') : root.Faces;
   const EMOJI = isNode ? require('./emoji-data.js') : root.EMOJI;
+  const Words = isNode ? require('./words.js') : root.Words;
 
   const MAX_LEVEL = 10;
-  // objects 물건 수, targets 찾을 종류 수, count 종류마다 몇 개, dense 겹치게, decoy 같은 그림의 다른 색 섞기
+  // objects 물건 수, targets 찾을 종류 수, count 종류마다 몇 개, dense 겹치게
   const LEVELS = [null,
     { objects: 10, targets: 1, count: [2, 2] },
     { objects: 12, targets: 1, count: [3, 3] },
@@ -16,12 +17,16 @@
     { objects: 16, targets: 2, count: [2, 3] },
     { objects: 18, targets: 2, count: [2, 3], dense: true },
     { objects: 20, targets: 3, count: [1, 3], dense: true },
-    { objects: 22, targets: 3, count: [2, 3], dense: true, decoy: true },
-    { objects: 24, targets: 3, count: [2, 4], dense: true, decoy: true },
-    { objects: 27, targets: 3, count: [2, 4], dense: true, decoy: true },
-    { objects: 30, targets: 4, count: [2, 4], dense: true, decoy: true },
+    { objects: 22, targets: 3, count: [2, 3], dense: true },
+    { objects: 24, targets: 3, count: [2, 4], dense: true },
+    { objects: 27, targets: 4, count: [2, 3], dense: true },
+    { objects: 30, targets: 4, count: [2, 4], dense: true },
   ];
-  const HUES = [0, 110, 180, 250];
+  // 찾을 물건: 단어 게임의 3글자 단어 그림 (몸 부분과 해는 장면에 어색해서 뺀다). kind 는 emoji-data 의 이름.
+  const SKIP = ['eye', 'ear', 'leg', 'sun'];
+  const slug = (n) => n.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+  const TARGET_WORDS = Words.WORDS.filter((x) => x.len === 3 && !SKIP.includes(x.w))
+    .map((x) => ({ word: x.w, kind: slug(x.e), g: x.g }));
   const fkey = (o) => o.kind + '|' + (o.hue || 0);
 
   // 아래쪽 물건이 앞에 그려진다. 앞에 그려지는 물건에 가려지지 않은 비율
@@ -61,13 +66,12 @@
     }
     const chosen = rng.shuffle(slots).slice(0, n);
 
-    // 찾을 것 정하기: 위/아래 영역 어디에나 놓일 수 있는 그림 중에서
+    // 찾을 것 정하기: 3글자 단어 그림 중에서 (비슷해 보이는 묶음 g 는 하나만)
     const targets = [];
-    const pool = rng.shuffle(Array.from(new Set([...upperKinds, ...lowerKinds])));
-    for (const kind of pool) {
+    for (const x of rng.shuffle(TARGET_WORDS.slice())) {
       if (targets.length >= cfg.targets) break;
-      const hue = cfg.decoy && Faces.colorful(kind) ? rng.pick(HUES) : 0;
-      targets.push({ face: { kind, hue }, count: cfg.count[0] + rng.int(cfg.count[1] - cfg.count[0] + 1) });
+      if (x.g && targets.some((t) => t.g === x.g)) continue;
+      targets.push({ face: { kind: x.kind, hue: 0 }, word: x.word, g: x.g, count: cfg.count[0] + rng.int(cfg.count[1] - cfg.count[0] + 1) });
     }
     const targetKeys = new Set(targets.map((t) => fkey(t.face)));
 
@@ -84,16 +88,7 @@
     for (; s < chosen.length; s++) {
       const slot = chosen[s];
       const kinds = (slot.y < horizon ? upperKinds : lowerKinds).filter((k) => !targetKinds.has(k));
-      let o;
-      // 헷갈리는 물건: 찾을 그림과 같은 그림, 다른 색
-      if (cfg.decoy && rng.next() < 0.3) {
-        const t = rng.pick(targets.filter((x) => Faces.colorful(x.face.kind)));
-        if (t) {
-          const hue = rng.pick(HUES.filter((h) => h !== (t.face.hue || 0)));
-          o = { kind: t.face.kind, hue, target: -1 };
-        }
-      }
-      if (!o) o = { kind: rng.pick(kinds.length ? kinds : lowerKinds.filter((k) => !targetKinds.has(k))), hue: 0, target: -1 };
+      const o = { kind: rng.pick(kinds.length ? kinds : lowerKinds.filter((k) => !targetKinds.has(k))), hue: 0, target: -1 };
       objects.push(Object.assign(o, { x: slot.x, y: slot.y }));
     }
     objects.forEach((o, id) => {
@@ -133,7 +128,7 @@
     return best;
   }
 
-  const Hidden = { MAX_LEVEL, LEVELS, generate, pick, visible };
+  const Hidden = { MAX_LEVEL, LEVELS, TARGET_WORDS, generate, pick, visible };
   if (isNode) module.exports = Hidden;
   else root.Hidden = Hidden;
 })(typeof self !== 'undefined' ? self : this);

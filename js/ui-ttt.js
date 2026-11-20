@@ -1,7 +1,7 @@
 // 틱택토 화면: 로봇이랑(쉬움/보통/어려움) 또는 둘이서. 말은 그림 (나 = 토끼, 로봇, 친구 = 곰).
 // 1번 = 나(먼저 고른 사람), 2번 = 로봇 또는 친구.
 (function (root) {
-  const LEVEL_NAMES = ['', '쉬움', '보통', '어려움'];
+  const LEVEL_NAMES = ['', 'Easy', 'Medium', 'Hard'];
   const PIECE = { me: 'rabbit_face', cpu: 'robot', friend: 'teddy_bear' };
 
   const S = { mode: 'cpu', board: Array(9).fill(0), turn: 1, first: 1, busy: false, over: false, timers: [], onEnd: null };
@@ -17,7 +17,7 @@
       const b = document.createElement('button');
       b.className = 'ttt-cell';
       b.dataset.i = i;
-      b.setAttribute('aria-label', `${i + 1}번 칸`);
+      b.setAttribute('aria-label', `Square ${i + 1}`);
       b.innerHTML = '<canvas></canvas>';
       b.addEventListener('click', () => onCell(i));
       grid.appendChild(b);
@@ -59,7 +59,7 @@
     stop();
     $('ttt-menu').classList.remove('hidden');
     $('ttt-board').classList.add('hidden');
-    $('ttt-mode').textContent = '틱택토';
+    $('ttt-mode').textContent = 'Tic-Tac-Toe';
     renderMenu();
   }
 
@@ -74,7 +74,7 @@
     $('ttt-menu').classList.add('hidden');
     $('ttt-board').classList.remove('hidden');
     const lv = Store.get('tttLevel') || 1;
-    $('ttt-mode').textContent = mode === 'cpu' ? `로봇 · ${LEVEL_NAMES[lv]} ▾` : '둘이서 ▾';
+    $('ttt-mode').textContent = mode === 'cpu' ? `Robot · ${LEVEL_NAMES[lv]} ▾` : 'Two Players ▾';
     S.first = 1;
     newRound();
   }
@@ -130,8 +130,8 @@
       el.classList.toggle('turn', !S.over && S.turn === p);
       const msg = el.querySelector('.msg');
       if (S.over || S.turn !== p) msg.textContent = '';
-      else if (p === 2 && S.mode === 'cpu') msg.textContent = '생각하는 중…';
-      else msg.textContent = S.mode === 'cpu' ? '내 차례!' : '차례!';
+      else if (p === 2 && S.mode === 'cpu') msg.textContent = 'Thinking…';
+      else msg.textContent = 'Your turn!';
     }
   }
 
@@ -173,15 +173,15 @@
     let result;
     if (!w) {
       Sound.bump();
-      result = { text: '비겼어요!', speech: 'It is a tie!', noSticker: true, sad: true };
+      result = { text: 'It\'s a tie!', speech: 'It is a tie!', noSticker: true, sad: true };
     } else {
       // 이긴 세 칸이 하나씩 반짝
       w.line.forEach((i, k) => later(() => {
         document.querySelector(`.ttt-cell[data-i="${i}"]`).classList.add('win');
         Sound.found();
       }, k * 220));
-      if (S.mode === 'cpu') result = w.who === 1 ? {} : { text: '아쉽다! 다시 해 볼까?', speech: 'Oh no! Try again!', noSticker: true, sad: true };
-      else result = { text: w.who === 1 ? '토끼 승리!' : '곰돌이 승리!', speech: w.who === 1 ? 'Bunny wins!' : 'Teddy wins!', noSticker: true };
+      if (S.mode === 'cpu') result = w.who === 1 ? {} : { text: 'So close! Try again?', speech: 'Oh no! Try again!', noSticker: true, sad: true };
+      else result = { text: w.who === 1 ? 'Bunny wins!' : 'Teddy wins!', speech: w.who === 1 ? 'Bunny wins!' : 'Teddy wins!', noSticker: true };
     }
     later(() => S.onEnd('ttt', 0, result), w ? 1500 : 900);
   }

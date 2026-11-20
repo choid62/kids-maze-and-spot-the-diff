@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -7,8 +7,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="미로놀이">
-  <title>미로랑 틀린그림</title>
+  <meta name="apple-mobile-web-app-title" content="Play Time">
+  <title>Play Time</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon-192.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -17,35 +17,50 @@
 <body>
   <main id="app">
     <section id="screen-home" class="screen">
-      <button class="corner-btn" id="btn-settings" aria-label="부모 설정">⚙️</button>
-      <h1 class="title">뭐 하고 놀까?</h1>
-      <div class="home-buttons">
-        <button class="tile maze" data-go="maze"><canvas class="btn-art" data-art="maze"></canvas><span class="t-name">미로</span><small id="home-maze-level"></small></button>
-        <button class="tile spot" data-go="spot"><canvas class="btn-art" data-art="spot"></canvas><span class="t-name">틀린그림</span><small id="home-spot-level"></small></button>
-        <!-- 숨은그림: 더 보강할 때까지 홈에서 숨김 (화면과 코드는 그대로, 주소 #hidden 으로는 들어갈 수 있음) -->
-        <button class="tile hidden-t hidden" data-go="hidden"><canvas class="btn-art" data-art="hidden"></canvas><span class="t-name">숨은그림</span><small id="home-hidden-level"></small></button>
-        <button class="tile memo" data-go="memo"><canvas class="btn-art" data-art="memo"></canvas><span class="t-name">짝 맞추기</span><small id="home-memo-level"></small></button>
-        <button class="tile pattern" data-go="pattern"><canvas class="btn-art" data-art="pattern"></canvas><span class="t-name">다음은?</span><small id="home-pattern-level"></small></button>
-        <button class="tile chop" data-go="chop"><div class="btn-art hands-art" id="chop-art"></div><span class="t-name">젓가락</span><small>손가락 놀이</small></button>
-        <button class="tile coco" data-go="coco"><canvas class="btn-art" data-art="coco"></canvas><span class="t-name">코코넛</span><small>크랙 놀이</small></button>
-        <button class="tile ttt" data-go="ttt"><canvas class="btn-art" data-art="ttt"></canvas><span class="t-name">틱택토</span><small>세 개 한 줄</small></button>
+      <button class="corner-btn" id="btn-settings" aria-label="Parent settings">⚙️</button>
+      <h1 class="title">What shall we play?</h1>
+      <div class="home-groups">
+        <section class="home-group">
+          <h2 class="group-title">👀 Look &amp; Find</h2>
+          <div class="home-buttons">
+            <button class="tile maze" data-go="maze"><canvas class="btn-art" data-art="maze"></canvas><span class="t-name">Maze</span><small id="home-maze-level"></small></button>
+            <button class="tile spot" data-go="spot"><canvas class="btn-art" data-art="spot"></canvas><span class="t-name">Spot It</span><small id="home-spot-level"></small></button>
+            <button class="tile hidden-t" data-go="hidden"><canvas class="btn-art" data-art="hidden"></canvas><span class="t-name">Hidden</span><small id="home-hidden-level"></small></button>
+          </div>
+        </section>
+        <section class="home-group">
+          <h2 class="group-title">🧠 Think &amp; Learn</h2>
+          <div class="home-buttons">
+            <button class="tile memo" data-go="memo"><canvas class="btn-art" data-art="memo"></canvas><span class="t-name">Memory</span><small id="home-memo-level"></small></button>
+            <button class="tile pattern" data-go="pattern"><canvas class="btn-art" data-art="pattern"></canvas><span class="t-name">What's Next?</span><small id="home-pattern-level"></small></button>
+            <button class="tile words" data-go="words"><canvas class="btn-art" data-art="words"></canvas><span class="t-name">Words</span><small id="home-words-level"></small></button>
+          </div>
+        </section>
+        <section class="home-group">
+          <h2 class="group-title">🤖 Play Together <small>vs robot or a friend</small></h2>
+          <div class="home-buttons">
+            <button class="tile chop" data-go="chop"><div class="btn-art hands-art" id="chop-art"></div><span class="t-name">Chopsticks</span><small>Finger game</small></button>
+            <button class="tile coco" data-go="coco"><canvas class="btn-art" data-art="coco"></canvas><span class="t-name">Coconut</span><small>Crack game</small></button>
+            <button class="tile ttt" data-go="ttt"><canvas class="btn-art" data-art="ttt"></canvas><span class="t-name">Tic-Tac-Toe</span><small>Three in a row</small></button>
+          </div>
+        </section>
       </div>
       <button class="sticker-btn" data-go="stickers">⭐ <span id="star-count">0</span></button>
     </section>
 
     <section id="screen-maze" class="screen">
       <header class="bar">
-        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
-        <div class="bar-mid"><button class="level-pill" id="maze-level" data-pick="maze" aria-label="레벨 고르기"></button></div>
-        <button class="round-btn" id="maze-new" aria-label="새 미로">🔄</button>
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid"><button class="level-pill" id="maze-level" data-pick="maze" aria-label="Choose a level"></button></div>
+        <button class="round-btn" id="maze-new" aria-label="New maze">🔄</button>
       </header>
       <div class="stage"><canvas id="maze-canvas"></canvas></div>
     </section>
 
     <section id="screen-spot" class="screen">
       <header class="bar">
-        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
-        <div class="bar-mid col"><button class="level-pill" id="spot-level" data-pick="spot" aria-label="레벨 고르기"></button><div class="dots" id="spot-dots"></div></div>
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid col"><button class="level-pill" id="spot-level" data-pick="spot" aria-label="Choose a level"></button><div class="dots" id="spot-dots"></div></div>
         <span class="spacer"></span>
       </header>
       <div class="stage"><canvas id="spot-canvas"></canvas></div>
@@ -53,22 +68,22 @@
 
     <section id="screen-chop" class="screen">
       <header class="bar">
-        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
-        <div class="bar-mid"><button class="level-pill" id="chop-mode">젓가락 놀이</button></div>
-        <button class="round-btn" id="chop-new" aria-label="새 판">🔄</button>
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid"><button class="level-pill" id="chop-mode">Chopsticks</button></div>
+        <button class="round-btn" id="chop-new" aria-label="New game">🔄</button>
       </header>
       <div class="chop-menu" id="chop-menu">
-        <button class="big-btn chop mode" id="chop-cpu">🤖 로봇이랑</button>
+        <button class="big-btn chop mode" id="chop-cpu">🤖 vs Robot</button>
         <div class="chop-levels" id="chop-levels">
-          <button data-lv="1">쉬움</button><button data-lv="2">보통</button><button data-lv="3">어려움</button>
+          <button data-lv="1">Easy</button><button data-lv="2">Medium</button><button data-lv="3">Hard</button>
         </div>
-        <button class="big-btn spot mode" id="chop-duo">👫 둘이서</button>
-        <p class="chop-rules">내 손으로 상대 손을 톡! 치면 손가락이 더해져요.<br>5개가 넘으면 그 손은 쉬어요. 두 손이 다 쉬면 져요.<br>한 손이 쉬고 다른 손이 2나 4이면, 나누기로 똑같이 나눌 수 있어요.</p>
+        <button class="big-btn spot mode" id="chop-duo">👫 Two Players</button>
+        <p class="chop-rules">Tap a hand to add your fingers to it.<br>At 5 or more, that hand is out. Lose both hands and you lose.<br>If one hand is out and the other has 2 or 4, you can Split it evenly.</p>
       </div>
       <div class="chop-board hidden" id="chop-board">
         <div class="chop-side top" id="chop-top">
           <div class="split-row hidden" data-p="1"></div>
-          <div class="chop-tools"><span class="turn-msg"></span><button class="split-btn" data-p="1">✋ 나누기 🤚</button></div>
+          <div class="chop-tools"><span class="turn-msg"></span><button class="split-btn" data-p="1">✋ Split 🤚</button></div>
           <div class="chop-hands">
             <button class="hand" data-p="1" data-h="0"></button>
             <canvas class="chop-avatar" id="chop-avatar-1"></canvas>
@@ -77,7 +92,7 @@
         </div>
         <div class="chop-side bottom" id="chop-bottom">
           <div class="split-row hidden" data-p="0"></div>
-          <div class="chop-tools"><span class="turn-msg"></span><button class="split-btn" data-p="0">✋ 나누기 🤚</button></div>
+          <div class="chop-tools"><span class="turn-msg"></span><button class="split-btn" data-p="0">✋ Split 🤚</button></div>
           <div class="chop-hands">
             <button class="hand" data-p="0" data-h="0"></button>
             <canvas class="chop-avatar" id="chop-avatar-0"></canvas>
@@ -89,17 +104,17 @@
 
     <section id="screen-ttt" class="screen">
       <header class="bar">
-        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
-        <div class="bar-mid"><button class="level-pill" id="ttt-mode">틱택토</button></div>
-        <button class="round-btn" id="ttt-new" aria-label="새 판">🔄</button>
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid"><button class="level-pill" id="ttt-mode">Tic-Tac-Toe</button></div>
+        <button class="round-btn" id="ttt-new" aria-label="New game">🔄</button>
       </header>
       <div class="chop-menu" id="ttt-menu">
-        <button class="big-btn ttt mode" id="ttt-cpu">🤖 로봇이랑</button>
+        <button class="big-btn ttt mode" id="ttt-cpu">🤖 vs Robot</button>
         <div class="chop-levels" id="ttt-levels">
-          <button data-lv="1">쉬움</button><button data-lv="2">보통</button><button data-lv="3">어려움</button>
+          <button data-lv="1">Easy</button><button data-lv="2">Medium</button><button data-lv="3">Hard</button>
         </div>
-        <button class="big-btn spot mode" id="ttt-duo">👫 둘이서</button>
-        <p class="chop-rules">번갈아 한 칸씩 그림을 놓아요.<br>가로, 세로, 대각선으로 세 개를 한 줄로 놓으면 이겨요!</p>
+        <button class="big-btn spot mode" id="ttt-duo">👫 Two Players</button>
+        <p class="chop-rules">Take turns putting a picture in a square.<br>Get three in a row (across, down, or corner to corner) to win!</p>
       </div>
       <div class="ttt-board hidden" id="ttt-board">
         <div class="ttt-players">
@@ -112,23 +127,23 @@
 
     <section id="screen-coco" class="screen">
       <header class="bar">
-        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
-        <div class="bar-mid"><button class="level-pill" id="coco-mode">코코넛 크랙</button></div>
-        <button class="round-btn" id="coco-new" aria-label="새 판">🔄</button>
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid"><button class="level-pill" id="coco-mode">Coconut Crack</button></div>
+        <button class="round-btn" id="coco-new" aria-label="New game">🔄</button>
       </header>
       <div class="chop-menu" id="coco-menu">
         <button class="big-btn coco mode" id="coco-1v1">🤖 1:1</button>
         <button class="big-btn spot mode" id="coco-3p">🤖 1:1:1 🤖</button>
         <div class="chop-levels" id="coco-levels">
-          <button data-lv="1">쉬움</button><button data-lv="2">보통</button><button data-lv="3">어려움</button>
+          <button data-lv="1">Easy</button><button data-lv="2">Medium</button><button data-lv="3">Hard</button>
         </div>
-        <p class="chop-rules">"Coco·nut, Coco·nut, Coco·nut, Crack!"<br>7박자에 맞춰 시계 방향으로 코코넛을 하나씩 톡톡!<br>Crack!에 걸린 코코넛은 쩍 갈라지고 → 우유가 쏟아지고 → 사라져요.<br>내 코코넛을 누르고, 한 번 더 누르면 거기서부터,<br>옆 코코넛을 누르면 옆에서부터 세요.<br>우유 쏟은 반쪽이 두 개면 내 차례에 다시 하나로 합칠 수 있어요 (한 판에 한 번).<br>코코넛이 다 사라지면 탈락, 끝까지 남으면 이겨요.</p>
+        <p class="chop-rules">"Coco·nut, Coco·nut, Coco·nut, Crack!"<br>Tap the coconuts one by one, clockwise, on 7 beats!<br>The coconut hit on Crack! cracks open → spills its milk → disappears.<br>Tap your coconut, then tap it again to start counting there,<br>or tap the next coconut to start from that one.<br>Two spilled halves can join back into one on your turn (once per game).<br>Lose all your coconuts and you're out. Last one left wins!</p>
       </div>
       <div class="coco-board hidden" id="coco-board">
         <div class="coco-table" id="coco-table">
           <div class="coco-center">
             <div class="coco-word" id="coco-word"></div>
-            <button class="merge-btn hidden" id="coco-merge">🥥 합치기</button>
+            <button class="merge-btn hidden" id="coco-merge">🥥 Join</button>
           </div>
         </div>
       </div>
@@ -136,18 +151,18 @@
 
     <section id="screen-memo" class="screen">
       <header class="bar">
-        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
-        <div class="bar-mid"><button class="level-pill" id="memo-mode">짝 맞추기</button></div>
-        <button class="round-btn" id="memo-new" aria-label="새 판">🔄</button>
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid"><button class="level-pill" id="memo-mode">Memory</button></div>
+        <button class="round-btn" id="memo-new" aria-label="New game">🔄</button>
       </header>
       <div class="chop-menu" id="memo-menu">
-        <button class="big-btn memo mode" id="memo-solo">🃏 혼자 하기</button>
-        <button class="level-pill" id="memo-level" data-pick="memo">혼자: 레벨 1 ▾</button>
-        <button class="big-btn spot mode" id="memo-bot">🤖 로봇이랑</button>
+        <button class="big-btn memo mode" id="memo-solo">🃏 Play Alone</button>
+        <button class="level-pill" id="memo-level" data-pick="memo">Alone: Level 1 ▾</button>
+        <button class="big-btn spot mode" id="memo-bot">🤖 vs Robot</button>
         <div class="chop-levels" id="memo-levels">
-          <button data-lv="1">쉬움</button><button data-lv="2">보통</button><button data-lv="3">어려움</button>
+          <button data-lv="1">Easy</button><button data-lv="2">Medium</button><button data-lv="3">Hard</button>
         </div>
-        <p class="chop-rules">카드를 두 장씩 뒤집어 같은 그림을 찾아요.<br>짝을 맞히면 한 번 더! 로봇은 본 카드를 기억해요.</p>
+        <p class="chop-rules">Flip two cards to find matching pictures.<br>Find a pair and go again! The robot remembers cards it has seen.</p>
       </div>
       <div class="memo-play hidden" id="memo-play">
         <div class="memo-score hidden" id="memo-score"></div>
@@ -157,33 +172,49 @@
 
     <section id="screen-hidden" class="screen">
       <header class="bar">
-        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
-        <div class="bar-mid col"><button class="level-pill" id="hidden-level" data-pick="hidden" aria-label="레벨 고르기"></button><div class="targets" id="hidden-targets"></div></div>
-        <button class="round-btn" id="hidden-hint" aria-label="힌트">💡</button>
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid col"><button class="level-pill" id="hidden-level" data-pick="hidden" aria-label="Choose a level"></button><div class="targets" id="hidden-targets"></div></div>
+        <button class="round-btn" id="hidden-hint" aria-label="Hint">💡</button>
       </header>
       <div class="stage"><canvas id="hidden-canvas"></canvas></div>
     </section>
 
     <section id="screen-pattern" class="screen">
       <header class="bar">
-        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
-        <div class="bar-mid col"><button class="level-pill" id="pattern-level" data-pick="pattern" aria-label="레벨 고르기"></button><div class="dots" id="pattern-dots"></div></div>
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid col"><button class="level-pill" id="pattern-level" data-pick="pattern" aria-label="Choose a level"></button><div class="dots" id="pattern-dots"></div></div>
         <span class="spacer"></span>
       </header>
       <div class="pattern-body">
-        <p class="pattern-ask">다음은 뭘까?</p>
+        <p class="pattern-ask">What comes next?</p>
         <div class="pattern-seq" id="pattern-seq"></div>
         <div class="pattern-opts" id="pattern-opts"></div>
       </div>
     </section>
 
+    <section id="screen-words" class="screen">
+      <header class="bar">
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
+        <div class="bar-mid col"><button class="level-pill" id="words-level" data-pick="words" aria-label="Choose a level"></button><div class="dots" id="words-dots"></div></div>
+        <button class="round-btn" id="words-new" aria-label="New game">🔄</button>
+      </header>
+      <div class="words-body">
+        <p class="words-ask">Match each word to its picture!</p>
+        <div class="words-board" id="words-board">
+          <svg class="words-lines" id="words-lines" aria-hidden="true"></svg>
+          <div class="words-col" id="words-left"></div>
+          <div class="words-col" id="words-right"></div>
+        </div>
+      </div>
+    </section>
+
     <section id="screen-stickers" class="screen">
       <header class="bar">
-        <button class="round-btn" data-go="home" aria-label="처음으로">🏠</button>
+        <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
         <div class="bar-mid">⭐ <span id="sticker-total">0</span></div>
         <span class="spacer"></span>
       </header>
-      <p id="sticker-empty" class="empty hidden">아직 스티커가 없어요.<br>놀이를 끝내면 스티커를 받아요!</p>
+      <p id="sticker-empty" class="empty hidden">No stickers yet.<br>Finish a game to get a sticker!</p>
       <div id="sticker-grid" class="sticker-grid"></div>
     </section>
   </main>
@@ -192,47 +223,47 @@
     <canvas id="confetti"></canvas>
     <div class="card">
       <canvas id="sticker-prize"></canvas>
-      <div class="cheer" id="cheer-text">잘했어!</div>
+      <div class="cheer" id="cheer-text">Good job!</div>
       <div class="levelup hidden" id="levelup"></div>
       <div class="row">
-        <button class="round-btn big" id="cele-home" aria-label="처음으로">🏠</button>
-        <button class="round-btn big primary" id="cele-next" aria-label="다음">▶</button>
+        <button class="round-btn big" id="cele-home" aria-label="Home">🏠</button>
+        <button class="round-btn big primary" id="cele-next" aria-label="Next">▶</button>
       </div>
     </div>
   </div>
 
   <div id="levels" class="overlay hidden">
     <div class="card">
-      <p class="card-title" id="levels-title">레벨 고르기</p>
+      <p class="card-title" id="levels-title">Choose a level</p>
       <div class="level-grid" id="level-grid"></div>
       <div class="level-legend" id="level-legend"></div>
-      <button class="text-btn" id="levels-close">닫기</button>
+      <button class="text-btn" id="levels-close">Close</button>
     </div>
   </div>
 
   <div id="gate" class="overlay hidden">
     <div class="card">
-      <p class="card-title">어른만 열 수 있어요</p>
+      <p class="card-title">Grown-ups only</p>
       <p class="gate-q" id="gate-q"></p>
       <div class="choices" id="gate-choices"></div>
-      <button class="text-btn" id="gate-cancel">닫기</button>
+      <button class="text-btn" id="gate-cancel">Close</button>
     </div>
   </div>
 
   <div id="settings" class="overlay hidden">
     <div class="card settings">
-      <p class="card-title">부모 설정</p>
-      <div class="set-row"><span>효과음</span><button id="set-sound" class="pill"></button></div>
-      <div class="set-row"><span>칭찬 목소리</span><button id="set-voice" class="pill"></button></div>
-      <div class="set-row"><span>미로 레벨 (1~10)</span>
+      <p class="card-title">Parent Settings</p>
+      <div class="set-row"><span>Sound effects</span><button id="set-sound" class="pill"></button></div>
+      <div class="set-row"><span>Voice</span><button id="set-voice" class="pill"></button></div>
+      <div class="set-row"><span>Maze level (1–10)</span>
         <span class="stepper"><button data-key="mazeLevel" data-step="-1">−</button><b id="set-mazeLevel"></b><button data-key="mazeLevel" data-step="1">+</button></span></div>
-      <div class="set-row"><span>틀린그림 레벨 (1~15)</span>
+      <div class="set-row"><span>Spot It level (1–15)</span>
         <span class="stepper"><button data-key="spotLevel" data-step="-1">−</button><b id="set-spotLevel"></b><button data-key="spotLevel" data-step="1">+</button></span></div>
-      <div class="set-row"><span>모은 스티커</span><b id="set-count"></b></div>
-      <p class="hint-text">1~3 쉬움, 4~6 보통, 7~8 어려움, 9~10 아주 어려움, 11~15 최고(틀린그림만). 게임 화면 위쪽 레벨 표시를 눌러도 레벨을 고를 수 있어요. 미로는 끝낼 때마다, 틀린그림은 힌트 없이 끝냈을 때 한 레벨씩 올라가요.</p>
+      <div class="set-row"><span>Stickers collected</span><b id="set-count"></b></div>
+      <p class="hint-text">1–3 Easy, 4–6 Medium, 7–8 Hard, 9–10 Very Hard, 11–15 Expert (Spot It only). You can also tap the level at the top of a game to pick one. Mazes go up a level each time one is finished; Spot It goes up when finished without a hint.</p>
       <div class="row">
-        <button class="text-btn danger" id="set-reset">처음부터 다시</button>
-        <button class="text-btn primary" id="set-close">닫기</button>
+        <button class="text-btn danger" id="set-reset">Start Over</button>
+        <button class="text-btn primary" id="set-close">Close</button>
       </div>
     </div>
   </div>
@@ -256,6 +287,8 @@
   <script src="js/ui-coco.js"></script>
   <script src="js/tictactoe.js"></script>
   <script src="js/ui-ttt.js"></script>
+  <script src="js/words.js"></script>
+  <script src="js/ui-words.js"></script>
   <script src="js/memory.js"></script>
   <script src="js/ui-memo.js"></script>
   <script src="js/hidden.js"></script>

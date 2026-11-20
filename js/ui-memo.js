@@ -1,7 +1,7 @@
 // 짝 맞추기 화면: 혼자(레벨 1~10) 또는 로봇이랑(기억력 쉬움/보통/어려움).
 (function (root) {
   const BOT_MEMORY = [0, 0.35, 0.7, 1]; // 로봇이 본 카드를 기억할 확률
-  const LEVEL_NAMES = ['', '쉬움', '보통', '어려움'];
+  const LEVEL_NAMES = ['', 'Easy', 'Medium', 'Hard'];
   const S = { mode: 'solo', g: null, open: [], matched: new Set(), busy: false, turn: 0, score: [0, 0], memory: new Map(), moves: 0, timers: [], onEnd: null, rng: null };
   const $ = (id) => document.getElementById(id);
   const later = (f, ms) => { S.timers.push(setTimeout(f, ms)); };
@@ -47,14 +47,14 @@
     stop();
     $('memo-menu').classList.remove('hidden');
     $('memo-play').classList.add('hidden');
-    $('memo-mode').textContent = '짝 맞추기';
+    $('memo-mode').textContent = 'Memory';
     renderMenu();
   }
 
   function renderMenu() {
     const lv = Store.get('memoBot') || 1;
     document.querySelectorAll('#memo-levels button').forEach((b) => b.classList.toggle('on', +b.dataset.lv === lv));
-    $('memo-level').textContent = `혼자: 레벨 ${Store.get('memoLevel') || 1} ▾`;
+    $('memo-level').textContent = `Alone: Level ${Store.get('memoLevel') || 1} ▾`;
   }
 
   function startGame(mode) {
@@ -82,8 +82,8 @@
     S.moves = 0;
     S.busy = false;
     $('memo-mode').textContent = S.mode === 'solo'
-      ? `혼자 · 레벨 ${level} · ${Core.levelName(level)} ▾`
-      : `로봇 · ${LEVEL_NAMES[Store.get('memoBot') || 1]} ▾`;
+      ? `Alone · Level ${level} · ${Core.levelName(level)} ▾`
+      : `Robot · ${LEVEL_NAMES[Store.get('memoBot') || 1]} ▾`;
     $('memo-score').classList.toggle('hidden', S.mode !== 'bot');
     build();
     renderScore();
@@ -211,8 +211,8 @@
     }
     const [me, bot] = S.score;
     if (me > bot) S.onEnd('memo', 0, {});
-    else if (me === bot) S.onEnd('memo', 0, { text: '비겼어요!', speech: 'It is a tie!', noSticker: true, sad: true });
-    else S.onEnd('memo', 0, { text: '아쉽다! 다시 해 볼까?', speech: 'Oh no! Try again!', noSticker: true, sad: true });
+    else if (me === bot) S.onEnd('memo', 0, { text: 'It\'s a tie!', speech: 'It is a tie!', noSticker: true, sad: true });
+    else S.onEnd('memo', 0, { text: 'So close! Try again?', speech: 'Oh no! Try again!', noSticker: true, sad: true });
   }
 
   // 자가 점검용: 내 차례마다 실제 카드를 누른다 (가끔 아는 짝을 맞힌다)

@@ -1,7 +1,7 @@
 {
-  "name": "미로랑 틀린그림",
-  "short_name": "미로놀이",
-  "description": "매번 새로 만들어지는 아이용 미로와 틀린그림 찾기",
+  "name": "Play Time",
+  "short_name": "Play Time",
+  "description": "Mazes, Spot It, word matching and more games for kids, new every time",
   "lang": "ko",
   "start_url": "./",
   "scope": "./",

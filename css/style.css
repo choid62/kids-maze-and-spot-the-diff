@@ -442,3 +442,54 @@ button.level-pill { border: none; font-family: inherit; color: var(--ink); curso
 .ttt-cell canvas { width: 100%; height: 100%; display: block; pointer-events: none; }
 .ttt-cell.pop canvas { animation: pop 0.3s ease-out; }
 .ttt-cell.win { background: #FFE07A; animation: hand-pop 0.5s ease-out; box-shadow: 0 0 0 5px #FFB020 inset; }
+
+/* ---------- 단어 잇기 ---------- */
+.tile.words { background: #2FB5A8; }
+.words-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 8px 12px 20px; min-height: 0; }
+.words-ask { margin: 0; font-size: 22px; font-weight: 900; color: #1E8E84; text-align: center; }
+.words-board { position: relative; display: flex; justify-content: space-between; gap: 34%; width: min(100%, 760px); touch-action: none; user-select: none; -webkit-user-select: none; }
+.words-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; overflow: visible; }
+.words-lines line.temp { stroke-dasharray: 2 16; }
+.words-col { flex: 1; display: flex; flex-direction: column; gap: 18px; }
+.wcard { --pair: #FFB27A; position: relative; border: none; border-radius: 24px; background: #fff; box-shadow: 0 5px 0 rgba(0, 0, 0, 0.1); height: min(19vh, 150px); display: flex; align-items: center; justify-content: center; padding: 0; touch-action: none; transition: background 0.2s, transform 0.15s; }
+.wcard.word .txt { font-size: clamp(26px, 6.5vw, 46px); font-weight: 900; color: #3D3355; letter-spacing: 0.02em; }
+.wcard.word.long .txt { font-size: clamp(20px, 5vw, 36px); }
+.wcard.pic img { height: 78%; width: auto; max-width: 80%; pointer-events: none; }
+.wcard .knob { position: absolute; top: 50%; width: 22px; height: 22px; margin-top: -11px; border-radius: 50%; background: #fff; border: 5px solid #D9C9E6; z-index: 3; }
+.wcard.word .knob { right: -11px; }
+.wcard.pic .knob { left: -11px; }
+.wcard.selected { transform: scale(1.05); box-shadow: 0 0 0 5px #FFC46B, 0 5px 0 rgba(0, 0, 0, 0.1); }
+.wcard.done { background: color-mix(in srgb, var(--pair) 22%, #fff); box-shadow: 0 0 0 5px var(--pair), 0 5px 0 rgba(0, 0, 0, 0.08); }
+.wcard.done .knob { border-color: var(--pair); background: var(--pair); }
+.wcard.done.pic img { animation: hand-pop 0.45s ease-out; }
+
+/* ---------- 홈: 놀이 묶음 ---------- */
+.home-groups { display: flex; flex-direction: column; gap: 18px; width: min(100%, 680px); }
+.home-group { display: flex; flex-direction: column; gap: 8px; }
+.group-title { margin: 0 4px; font-size: 20px; font-weight: 900; color: #6B5A4E; }
+.group-title small { font-size: 14px; font-weight: 800; color: #A8968A; margin-left: 4px; }
+.home-group .home-buttons { grid-template-columns: repeat(3, 1fr); width: 100%; }
+@media (max-width: 520px) {
+  .home-group .home-buttons { gap: 8px; }
+  .home-group .tile { padding: 10px 4px 8px; }
+  .home-group .tile .btn-art { width: 60px; height: 60px; }
+  .home-group .tile .t-name { font-size: 16px; }
+  .home-group .tile small { font-size: 11px; }
+}
+/* 가로 화면(태블릿 가로): 묶음 셋을 나란히 */
+@media (orientation: landscape) and (min-width: 900px) {
+  .home-groups { flex-direction: row; width: min(100%, 1240px); gap: 16px; }
+  .home-group { flex: 1; }
+  .home-group .home-buttons { grid-template-columns: 1fr; }
+  .home-group .tile { display: grid; grid-template-columns: auto 1fr; column-gap: 14px; row-gap: 0; align-items: center; justify-items: start; padding: 10px 14px; text-align: left; }
+  .home-group .tile .btn-art { width: 64px; height: 64px; grid-row: span 2; }
+  .home-group .tile .t-name { margin-top: 0; align-self: end; }
+  .home-group .tile small { align-self: start; }
+}
+
+/* 숨은그림: 찾을 물건 단어 */
+.targets { gap: 14px; }
+.targets .target { padding: 4px 18px; gap: 6px; border-radius: 18px; }
+.targets .target .word { font-size: 58px; line-height: 1.05; font-weight: 900; color: #3D3355; letter-spacing: 0.16em; }
+.targets .target b { font-size: 24px; }
+@media (max-width: 520px) { .targets .target .word { font-size: 44px; } .targets .target b { font-size: 20px; } }

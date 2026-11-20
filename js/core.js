@@ -37,11 +37,11 @@
 
   // 레벨(1~15)을 부모가 알아보기 쉬운 말로
   function levelName(level) {
-    if (level <= 3) return '쉬움';
-    if (level <= 6) return '보통';
-    if (level <= 8) return '어려움';
-    if (level <= 10) return '아주 어려움';
-    return '최고';
+    if (level <= 3) return 'Easy';
+    if (level <= 6) return 'Medium';
+    if (level <= 8) return 'Hard';
+    if (level <= 10) return 'Very Hard';
+    return 'Expert';
   }
 
   const Core = { makeRng, newSeed, clamp, levelName };
