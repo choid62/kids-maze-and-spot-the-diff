@@ -1,7 +1,7 @@
 // 틀린그림 화면: 두 그림을 보고 다른 곳을 누른다.
 (function (root) {
   const MAX_LEVEL = Scene.MAX_LEVEL;
-  const HINT_AFTER_MS = 120000; // 판을 시작하거나 마지막으로 차이를 찾은 뒤 2분이 지나면 힌트
+  const HINT_AFTER_MS = 60000; // 판을 시작하거나 마지막으로 차이를 찾은 뒤 1분이 지나면 힌트
   const MARK = '#FF3B6B';
 
   const S = {

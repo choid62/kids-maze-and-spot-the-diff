@@ -39,7 +39,7 @@
     const box = S.canvas.parentElement.getBoundingClientRect();
     const dims = Maze.dimsForLevel(level, box.height / Math.max(1, box.width));
     S.maze = Maze.generate(dims.cols, dims.rows, seed);
-    S.trail = [{ x: 0, y: 0 }];
+    S.trail = [{ x: S.maze.start.x, y: S.maze.start.y }];
     S.facing = 1;
     S.won = false;
     S.grabbing = false;

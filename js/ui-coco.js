@@ -348,6 +348,7 @@
       if (idx >= 0 && nutEl(idx)) nutEl(idx).classList.add('pop');
       if (idx >= 0 && what === 'crack' && nutEl(idx + 1)) nutEl(idx + 1).classList.add('pop');
       if (S.size > 2 && t.p === 0 && what === 'out') return later(() => finish(-1), 900); // 내가 탈락
+      if (Coconut.winner(g) < 0 && Coconut.isTie(g)) return later(() => finish(-3), 900); // 똑같이 하나씩 남으면 비김
       if (++S.rounds >= MAX_ROUNDS && Coconut.winner(g) < 0) return later(() => finish(-2), 900); // 너무 길어지면 비김
       later(nextTurn, 1300);
     }
@@ -358,8 +359,10 @@
     S.busy = false;
     render();
     $('coco-merge').classList.add('hidden');
-    say(w === 0 ? '내가 이겼다!' : w === -2 ? '비겼어요!' : '아쉽다!');
-    const result = w === 0 ? {} : w === -2 ? { text: '비겼어요!', speech: 'It is a tie!', noSticker: true, sad: true } : { text: '아쉽다! 다시 해 볼까?', speech: 'Oh no! Try again!', noSticker: true, sad: true };
+    // w: 이긴 자리, -1 내가 탈락, -2 너무 길어져 비김, -3 똑같이 하나씩 남아 비김
+    say(w === 0 ? '내가 이겼다!' : w === -3 ? '똑같이 하나씩! 비겼어요' : w === -2 ? '비겼어요!' : '아쉽다!');
+    const tie = { speech: 'It is a tie!', noSticker: true, sad: true };
+    const result = w === 0 ? {} : w === -3 ? Object.assign({ text: '똑같이 하나씩! 비겼어요' }, tie) : w === -2 ? Object.assign({ text: '비겼어요!' }, tie) : { text: '아쉽다! 다시 해 볼까?', speech: 'Oh no! Try again!', noSticker: true, sad: true };
     later(() => S.onEnd('coco', 0, result), 900);
   }
 

@@ -18,6 +18,14 @@
   const alive = (g, p) => g.players[p].units.length > 0;
   const aliveCount = (g) => g.players.filter((pl) => pl.units.length > 0).length;
   const winner = (g) => (aliveCount(g) === 1 ? g.players.findIndex((pl) => pl.units.length > 0) : -1);
+  // 비김: 남은 사람 모두 코코넛이 하나씩이고 모양이 같을 때 (그때는 먼저 세는 사람이 이길 수밖에 없어서 비김으로 한다).
+  // 처음의 통 코코넛 하나씩은 비김이 아니다.
+  function isTie(g) {
+    const left = g.players.filter((pl) => pl.units.length > 0);
+    if (left.length < 2 || left.some((pl) => pl.units.length !== 1)) return false;
+    const stage = left[0].units[0];
+    return stage !== 'whole' && left.every((pl) => pl.units[0] === stage);
+  }
 
   // 시계 방향으로 늘어선 코코넛 목록 [{ p, u }]
   function order(g) {
@@ -97,6 +105,7 @@
       const w = winner(g);
       if (w >= 0) table2[k] = w === 0 ? 1 : -1;
       else if (aliveCount(g) === 0) continue;
+      else if (isTie(g)) table2[k] = 0; // 비김에서 끝
       else kids[k] = { c, list: children2(g).map((x) => key2(x.n)) };
     }
     for (let changed = true; changed;) {
@@ -146,7 +155,7 @@
         if (t.p === human) v += 3;
         const next = clone(g);
         hit(next, t);
-        if (winner(next) < 0) {
+        if (winner(next) < 0 && !isTie(next)) {
           const nexts = starts(next, next.counter);
           v -= (3 * nexts.filter((s2) => target(next, s2).p === counter).length) / nexts.length;
         }
@@ -158,7 +167,7 @@
     return pick(opts.filter((s, i) => scores[i] === best));
   }
 
-  const Coconut = { BEATS, NEXT_STAGE, newGame, order, indexOf, starts, countPath, target, hit, winner, aliveCount, cpuChoice, canMerge, merge, value2, bestStarts };
+  const Coconut = { BEATS, NEXT_STAGE, newGame, order, indexOf, starts, countPath, target, hit, winner, aliveCount, cpuChoice, canMerge, merge, value2, bestStarts, isTie };
   if (typeof module !== 'undefined' && module.exports) module.exports = Coconut;
   else root.Coconut = Coconut;
 })(typeof self !== 'undefined' ? self : this);

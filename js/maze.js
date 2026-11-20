@@ -15,8 +15,10 @@
     const rng = Core.makeRng(seed);
     const walls = new Array(cols * rows).fill(N | E | S | W);
     const visited = new Uint8Array(cols * rows);
-    const stack = [0];
-    visited[0] = 1;
+    // 길 파기는 아무 칸에서나 시작 (늘 같은 구석에서 시작하면 길 모양이 한쪽으로 치우친다)
+    const first = rng.int(cols * rows);
+    const stack = [first];
+    visited[first] = 1;
     while (stack.length) {
       const cur = stack[stack.length - 1];
       const x = cur % cols, y = (cur / cols) | 0;
@@ -35,7 +37,38 @@
       visited[next] = 1;
       stack.push(next);
     }
-    return { cols, rows, walls, start: { x: 0, y: 0 }, goal: { x: cols - 1, y: rows - 1 }, seed };
+    const maze = { cols, rows, walls, seed };
+    // 출발: 가장자리 칸 중 아무 데나. 도착: 출발에서 길로 가장 먼 칸.
+    // 길이 하나뿐인 미로에서 가장 먼 칸은 늘 막다른 끝이라, 도착점 너머로 이어지는 쓸데없는 길이 없다.
+    const border = [];
+    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+      if (x === 0 || y === 0 || x === cols - 1 || y === rows - 1) border.push({ x, y });
+    }
+    maze.start = rng.pick(border);
+    const dist = distances(maze, maze.start);
+    const far = Math.max(...dist);
+    const goals = [];
+    dist.forEach((d, i) => { if (d === far) goals.push({ x: i % cols, y: (i / cols) | 0 }); });
+    maze.goal = rng.pick(goals);
+    return maze;
+  }
+
+  // 한 칸에서 모든 칸까지 길로 몇 걸음인지
+  function distances(maze, from) {
+    const { cols, rows } = maze;
+    const dist = new Array(cols * rows).fill(-1);
+    dist[from.y * cols + from.x] = 0;
+    const queue = [from.y * cols + from.x];
+    while (queue.length) {
+      const cur = queue.shift();
+      const x = cur % cols, y = (cur / cols) | 0;
+      for (const d of DIRS) {
+        if (!canMove(maze, x, y, d.dx, d.dy)) continue;
+        const n = (y + d.dy) * cols + (x + d.dx);
+        if (dist[n] < 0) { dist[n] = dist[cur] + 1; queue.push(n); }
+      }
+    }
+    return dist;
   }
 
   function canMove(maze, x, y, dx, dy) {
@@ -91,7 +124,7 @@
     return { cols: Core.clamp(Math.round(n / a), n, 24), rows: n };
   }
 
-  const Maze = { generate, canMove, solve, pathBetween, dimsForLevel, MAX_LEVEL, N, E, S, W };
+  const Maze = { generate, canMove, solve, pathBetween, distances, dimsForLevel, MAX_LEVEL, N, E, S, W };
   if (typeof module !== 'undefined' && module.exports) module.exports = Maze;
   else root.Maze = Maze;
 })(typeof self !== 'undefined' ? self : this);

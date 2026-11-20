@@ -100,8 +100,8 @@
       if (y === 3 && wl & Maze.S) { ctx.moveTo(x0, y0 + cell); ctx.lineTo(x0 + cell, y0 + cell); }
     }
     ctx.stroke();
-    Draw.object(ctx, 'rabbit_face', pad + cell * 0.5, pad + cell * 0.5, cell * 0.85);
-    Draw.object(ctx, 'carrot', pad + cell * 3.5, pad + cell * 3.5, cell * 0.8);
+    Draw.object(ctx, 'rabbit_face', pad + cell * (m.start.x + 0.5), pad + cell * (m.start.y + 0.5), cell * 0.85);
+    Draw.object(ctx, 'carrot', pad + cell * (m.goal.x + 0.5), pad + cell * (m.goal.y + 0.5), cell * 0.8);
   }
 
   // 짝 맞추기: 뒤집힌 카드 하나와 그림 카드 하나

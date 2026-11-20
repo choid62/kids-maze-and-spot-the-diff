@@ -52,12 +52,30 @@ test('우유 쏟은 반쪽 두 개는 다시 통 코코넛 하나로 합칠 수 
   }
 });
 
-test('1:1은 둘 다 완벽하면 처음 세는 사람이 이기고, 어려움 컴퓨터는 아무렇게나 하는 아이에게 거의 지지 않는다', () => {
+test('1:1은 둘 다 완벽하면 비기고, 어려움 컴퓨터는 아무렇게나 하는 아이에게 거의 지지 않는다', () => {
   const g = C.newGame(2);
-  assert.strictEqual(C.value2(g), 1);
+  assert.strictEqual(C.value2(g), 0);
   let losses = 0;
   for (let seed = 1; seed <= 400; seed++) if (play(2, 3, 1, seed).winner === 0) losses++;
   assert.ok(losses < 20, `어려움이 400판 중 ${losses}판 짐`);
+});
+
+test('남은 사람 모두 같은 모양으로 하나씩이면 비김 (처음의 통 코코넛은 아님)', () => {
+  const g = C.newGame(2);
+  assert.ok(!C.isTie(g), '처음 통 코코넛 하나씩은 비김이 아님');
+  g.players[0].units = ['half']; g.players[1].units = ['half'];
+  assert.ok(C.isTie(g));
+  g.players[0].units = ['spilled']; g.players[1].units = ['spilled'];
+  assert.ok(C.isTie(g));
+  g.players[0].units = ['spilled']; g.players[1].units = ['half'];
+  assert.ok(!C.isTie(g), '모양이 다르면 비김 아님');
+  g.players[0].units = ['half', 'half']; g.players[1].units = ['half'];
+  assert.ok(!C.isTie(g), '하나씩이 아니면 비김 아님');
+  const h = C.newGame(3);
+  h.players[0].units = ['half']; h.players[1].units = []; h.players[2].units = ['half'];
+  assert.ok(C.isTie(h), '3명 중 남은 둘이 같은 모양 하나씩이면 비김');
+  h.players[1].units = ['spilled'];
+  assert.ok(!C.isTie(h));
 });
 
 test('다음에 세는 사람은 걸린 사람, 탈락했으면 시계 방향 다음 사람', () => {
@@ -91,13 +109,13 @@ function play(n, level, kidLevel, seed) {
   const g = C.newGame(n);
   g.counter = seed % n;
   let rounds = 0;
-  while (C.winner(g) < 0 && g.players[0].units.length && rounds < 80) {
+  while (C.winner(g) < 0 && g.players[0].units.length && rounds < 80 && !C.isTie(g)) {
     const c = g.counter;
     C.merge(g, c);
     C.hit(g, C.target(g, C.cpuChoice(g, c, c === 0 ? kidLevel : level, 0, rand)));
     rounds++;
   }
-  return { winner: C.winner(g), rounds, kidOut: !g.players[0].units.length };
+  return { winner: C.winner(g), rounds, kidOut: !g.players[0].units.length, tie: C.isTie(g) };
 }
 function kidWinRate(n, level, kidLevel, games) {
   let wins = 0;
@@ -113,13 +131,13 @@ test('난이도가 높을수록 아이가 이기기 어렵고, 어려움도 가�
   }
 });
 
-test('합치기가 있어도 판은 80번 안에 끝나고, 이긴 사람은 한 명', () => {
+test('합치기가 있어도 판은 80번 안에 끝나고 (이기거나, 탈락하거나, 비기거나), 이긴 사람은 한 명', () => {
   for (const n of [2, 3]) {
     let ended = 0;
     for (let seed = 1; seed <= 200; seed++) {
       const r = play(n, 1, 1, seed);
-      if (r.winner >= 0 || r.kidOut) ended++;
-      assert.ok(r.rounds >= 4 || r.kidOut, `한 사람이 탈락하려면 최소 4번은 걸려야 함`);
+      if (r.winner >= 0 || r.kidOut || r.tie) ended++;
+      assert.ok(r.rounds >= 4 || r.kidOut || r.tie, `한 사람이 탈락하려면 최소 4번은 걸려야 함`);
     }
     assert.strictEqual(ended, 200, `${n}명: 200판 중 ${ended}판만 끝남`);
   }

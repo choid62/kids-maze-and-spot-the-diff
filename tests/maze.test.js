@@ -62,6 +62,33 @@ test('두 칸 사이 최단 길은 이어져 있고, 같은 칸이면 그 칸 �
   assert.deepStrictEqual(Maze.pathBetween(m, a, a), [a]);
 });
 
+test('출발은 가장자리, 도착은 출발에서 길로 가장 먼 막다른 끝', () => {
+  for (let seed = 1; seed <= 300; seed++) {
+    const cols = 4 + (seed % 9), rows = 5 + (seed % 12);
+    const m = Maze.generate(cols, rows, seed);
+    const { x, y } = m.start;
+    assert.ok(x === 0 || y === 0 || x === cols - 1 || y === rows - 1, '출발이 가장자리가 아님');
+    const dist = Maze.distances(m, m.start);
+    assert.strictEqual(dist[m.goal.y * cols + m.goal.x], Math.max(...dist), '도착이 가장 먼 칸이 아님');
+    let open = 0;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (Maze.canMove(m, m.goal.x, m.goal.y, dx, dy)) open++;
+    assert.strictEqual(open, 1, '도착이 막다른 끝이 아님 (도착 너머로 길이 이어짐)');
+  }
+});
+
+test('출발과 도착 위치는 판마다 다르고, 늘 오른쪽 아래가 아니다', () => {
+  const starts = new Set(), goals = new Set();
+  let bottomRight = 0;
+  for (let seed = 1; seed <= 100; seed++) {
+    const m = Maze.generate(7, 11, seed);
+    starts.add(m.start.x + ',' + m.start.y);
+    goals.add(m.goal.x + ',' + m.goal.y);
+    if (m.goal.x === 6 && m.goal.y === 10) bottomRight++;
+  }
+  assert.ok(starts.size > 15 && goals.size > 15, `출발 ${starts.size}곳, 도착 ${goals.size}곳`);
+  assert.ok(bottomRight < 15, `도착이 오른쪽 아래 구석인 판 ${bottomRight}개`);
+});
+
 test('레벨별 크기: 레벨 1은 4칸, 레벨 10은 13칸, 세로 화면은 세로로 길게', () => {
   assert.deepStrictEqual(Maze.dimsForLevel(1, 1.8), { cols: 4, rows: 7 });
   assert.strictEqual(Maze.dimsForLevel(6, 1.8).cols, 9);

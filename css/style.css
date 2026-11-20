@@ -389,3 +389,39 @@ button.level-pill { border: none; font-family: inherit; color: var(--ink); curso
 .pattern-opts .opt { border: none; border-radius: 22px; background: #fff; box-shadow: 0 5px 0 rgba(0, 0, 0, 0.12); display: flex; align-items: center; justify-content: center; padding: 0; }
 .pattern-opts .opt:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.12); }
 .pattern-opts .opt.right { background: #DFF5DA; }
+
+/* 젓가락 놀이: 덧셈 보여 주기 */
+.chop-board { position: relative; }
+.chop-eq {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 6;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 18px; background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); animation: eq-in 0.25s ease-out; width: max-content;
+}
+/* 위치가 변하지 않는 등장 (빈칸 위치를 바로 재야 해서 크기 애니메이션은 쓰지 않는다) */
+@keyframes eq-in { from { opacity: 0; } to { opacity: 1; } }
+.chop-eq .eq-row { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
+.chop-eq .slot { width: 58px; height: 58px; border-radius: 16px; border: 3px dashed #E6C9A8; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 900; color: var(--ink); }
+.chop-eq .slot.sum { border-color: #FF9F5A; }
+.chop-eq .slot.sum.show { background: #FFE8D2; border-style: solid; animation: hand-pop 0.4s ease-out; color: #E2601B; }
+.chop-eq .op { font-size: 34px; font-weight: 900; color: #9A7B62; }
+.chop-eq .eq-note { text-align: center; font-size: 16px; font-weight: 800; color: #9A7B62; }
+.chop-eq .eq-note:empty { display: none; }
+.chop-fly { position: absolute; left: 0; top: 0; z-index: 7; transition: transform 0.55s cubic-bezier(0.3, 0.7, 0.3, 1); pointer-events: none; }
+.chop-fly.num { width: 58px; height: 58px; border-radius: 50%; background: #FF9F5A; color: #fff; font-size: 34px; font-weight: 900; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15); }
+.chop-fly.hand { width: 90px; }
+.chop-fly.hand svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2)); }
+/* 날아가는 숫자는 스크립트가 매 프레임 움직인다 (CSS 전환은 끔) */
+.chop-fly { transition: none; }
+.chop-eq .slot.filled { border-style: solid; border-color: #FFB27A; background: #FFF4E6; }
+.chop-eq .slot.sum.filled { border-color: #FF9F5A; background: #FFE8D2; color: #E2601B; }
+/* 손이 손을 칠 때: 가운데 식은 잠깐 흐리게 */
+.chop-eq { transition: opacity 0.2s; }
+.chop-eq.dim { opacity: 0.25; }
+/* 젓가락 놀이: 손가락 세기 */
+.finger-count {
+  position: absolute; left: 0; top: 0; z-index: 8; pointer-events: none;
+  width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 3px solid #FF9F5A;
+  color: #E2601B; font-size: 17px; font-weight: 900; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); animation: count-in 0.25s ease-out;
+}
+@keyframes count-in { from { opacity: 0; } to { opacity: 1; } }
