@@ -96,7 +96,7 @@
   }
 
   const cfg = () => Numbers.MONSTER_LEVELS[S.level];
-  const itemSize = () => Math.max(30, Math.min(64, $('monster-plate').clientWidth / 6.2));
+  const itemSize = () => Math.max(26, Math.min(64, $('monster-plate').clientWidth / 7.4)); // 한 줄 5개가 접시 안에 들어가게
   const isAdd = () => S.q.have < S.q.want;
 
   // 접시 수와 원하는 수의 차이를 묻는다: 더 주기 "2 + ? = 5", 덜기 "7 − ? = 4"
@@ -116,7 +116,19 @@
     const ask = isAdd() ? 'How many more?' : 'Too many! How many should we take away?';
     $('monster-tip').textContent = ask;
     showEq('?');
-    $('monster-choices').innerHTML = Numbers.choices(S.q.answer, S.rng, 1, 10).map((n) => `<button class="num-btn" data-n="${n}">${n}</button>`).join('');
+    // 보기: 숫자 대신 음식 그림 n 개 (5개씩 한 줄로 세기 쉽게)
+    const box = $('monster-choices');
+    box.innerHTML = '';
+    const icon = Math.max(22, Math.min(44, Math.floor((Math.min(root.innerWidth, 900) - 60) / 3 / 5.9)));
+    for (const n of Numbers.choices(S.q.answer, S.rng, 1, 10)) {
+      const b = document.createElement('button');
+      b.className = 'pic-choice';
+      b.dataset.n = n;
+      b.setAttribute('aria-label', String(n));
+      for (let i = 0; i < n; i++) b.appendChild(foodCanvas(food.kind, icon));
+      b.style.setProperty('--icon', icon + 'px');
+      box.appendChild(b);
+    }
     Sound.say(`I want ${want} ${word}! ${ask}`);
     if (S.demo) demoAnswer();
   }
@@ -141,6 +153,8 @@
     // 접시
     const items = $('monster-items');
     items.innerHTML = '';
+    // 한 줄에 5개씩 (세기 쉽게)
+    items.style.width = (size * 5 + 4 * 4) + 'px';
     for (let i = 0; i < S.plate; i++) {
       const it = document.createElement('span');
       it.className = 'item';

@@ -1,7 +1,7 @@
 // 기기 안에 진행도와 스티커를 저장한다. (저장이 막힌 환경에서도 앱은 동작)
 (function (root) {
   const KEY = 'kmsd.v1';
-  const defaults = () => ({ mazeLevel: 1, spotLevel: 1, stickers: [], sound: true, voice: true, chopLevel: 1, cocoLevel: 1, memoLevel: 1, memoBot: 1, hiddenLevel: 1, patternLevel: 1, tttLevel: 1, wordsLevel: 1, wordsSeen: {}, wordsTick: 0, busLevel: 1, monsterLevel: 1, tenLevel: 1 });
+  const defaults = () => ({ mazeLevel: 1, spotLevel: 1, stickers: [], sound: true, voice: true, chopLevel: 1, cocoLevel: 1, memoLevel: 1, memoBot: 1, hiddenLevel: 1, patternLevel: 1, tttLevel: 1, wordsLevel: 1, wordsSeen: {}, wordsTick: 0, busLevel: 1, monsterLevel: 1, tenLevel: 1, hiddenGames: [] });
 
   function load() {
     try {

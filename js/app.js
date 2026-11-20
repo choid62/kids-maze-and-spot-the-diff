@@ -37,6 +37,7 @@
     if (current === 'pattern' && name !== 'pattern') PatternGame.stop();
     hide('celebrate');
     hide('levels');
+    if (name !== 'home') editingHome = false;
     for (const s of SCREENS) $('screen-' + s).classList.toggle('active', s === name);
     current = name;
     const opts = debugOpts || {};
@@ -80,6 +81,7 @@
 
   function renderHome() {
     $('star-count').textContent = Store.get('stickers').length;
+    applyHiddenGames();
     $('home-maze-level').textContent = 'Level ' + Store.get('mazeLevel');
     $('home-spot-level').textContent = 'Level ' + Store.get('spotLevel');
     $('home-hidden-level').textContent = 'Level ' + Store.get('hiddenLevel');
@@ -382,6 +384,51 @@
     $('set-mazeLevel').textContent = Store.get('mazeLevel');
     $('set-spotLevel').textContent = Store.get('spotLevel');
     $('set-count').textContent = Store.get('stickers').length;
+    const total = homeGames().length;
+    $('set-games-count').textContent = `${total - (Store.get('hiddenGames') || []).length} of ${total}`;
+  }
+
+  // ---------- 홈에 보일 게임 고르기 (부모 설정) ----------
+  // 홈의 게임 타일 목록: [{ id, name, tile }]
+  function homeGames() {
+    return Array.from(document.querySelectorAll('#screen-home .home-buttons .tile[data-go]'))
+      .map((tile) => ({ id: tile.dataset.go, name: tile.querySelector('.t-name').textContent, tile }));
+  }
+
+  // 꺼 둔 게임은 홈에서 숨기고, 묶음의 게임이 모두 꺼지면 묶음 제목도 숨긴다.
+  // 고르기 모드(부모 설정 → Choose games)에서는 모든 게임을 보여 주고, 꺼진 게임은 흐리게 + ✖
+  let editingHome = false;
+  function applyHiddenGames() {
+    const off = new Set(Store.get('hiddenGames') || []);
+    $('screen-home').classList.toggle('editing', editingHome);
+    for (const g of homeGames()) {
+      g.tile.classList.toggle('off', !editingHome && off.has(g.id));
+      g.tile.classList.toggle('disabled', editingHome && off.has(g.id));
+    }
+    document.querySelectorAll('#screen-home .home-group').forEach((grp) => {
+      const any = Array.from(grp.querySelectorAll('.tile[data-go]')).some((t) => !off.has(t.dataset.go));
+      grp.classList.toggle('hidden', !editingHome && !any);
+    });
+  }
+
+  function startHomeEdit() {
+    editingHome = true;
+    hide('settings');
+    if (current !== 'home') go('home');
+    applyHiddenGames();
+  }
+
+  function endHomeEdit() {
+    editingHome = false;
+    applyHiddenGames();
+  }
+
+  function toggleGame(id) {
+    const off = new Set(Store.get('hiddenGames') || []);
+    if (off.has(id)) off.delete(id);
+    else off.add(id);
+    Store.set('hiddenGames', Array.from(off));
+    applyHiddenGames();
   }
 
   function bindSettings() {
@@ -396,12 +443,15 @@
         renderSettings();
       });
     });
+    $('set-choose-games').addEventListener('click', () => { Sound.tap(); startHomeEdit(); });
+    $('home-edit-done').addEventListener('click', () => { Sound.tap(); endHomeEdit(); });
     $('set-reset').addEventListener('click', () => {
       if (confirm('Reset all stickers and levels?')) {
-        const sound = Store.get('sound'), voice = Store.get('voice');
+        const sound = Store.get('sound'), voice = Store.get('voice'), hiddenGames = Store.get('hiddenGames');
         Store.reset();
         Store.set('sound', sound);
         Store.set('voice', voice);
+        Store.set('hiddenGames', hiddenGames);
         renderSettings();
       }
     });
@@ -428,7 +478,15 @@
 
     document.addEventListener('click', (e) => {
       const b = e.target.closest('[data-go]');
-      if (b) { Sound.unlock(); Sound.tap(); go(b.dataset.go); }
+      if (!b) return;
+      Sound.unlock();
+      Sound.tap();
+      // 고르기 모드: 홈의 게임을 누르면 켜고 끄기 (게임으로 들어가지 않는다)
+      if (editingHome && b.closest('#screen-home')) {
+        if (b.classList.contains('tile')) toggleGame(b.dataset.go);
+        return;
+      }
+      go(b.dataset.go);
     });
     $('btn-settings').addEventListener('click', openGate);
     document.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => { Sound.unlock(); Sound.tap(); openLevels(b.dataset.pick); }));
@@ -472,6 +530,15 @@
       openLevels(route());
       const n = Number(demo.slice(4));
       if (n) $('level-grid').children[n - 1].click();
+    }
+    // 점검용: ?demo=gamesoff 는 부모 설정에서 Play Together 묶음 전부와 Maze 를 끄고 홈으로, ?demo=settings 는 설정 창만 연다
+    if (demo === 'settings' || demo.startsWith('gamesoff')) {
+      openSettings();
+      if (demo.startsWith('gamesoff')) {
+        $('set-choose-games').click();
+        for (const id of ['maze', 'chop', 'coco', 'ttt', 'rps']) document.querySelector(`#screen-home .tile[data-go="${id}"]`).click();
+        if (demo === 'gamesoff') $('home-edit-done').click();
+      }
     }
 
     if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {

@@ -120,28 +120,84 @@
     else setMsg(1 - p, 'Your turn! Pick one!');
   }
 
-  // 두 주먹이 세 번 흔들리고 "Shoot!" 에 펼쳐진다
+  // "Rock, paper, scissors, shoot!" 을 보통 말하는 속도로 한 번에 말하고, 화면의 단어와 주먹 흔들기를 목소리에 맞춘다.
+  //  1) 기기가 단어 알림(boundary)을 주면 그 단어를 말하는 순간에 바꾼다.
+  //  2) 안 주면 말하기 시작한 때부터, 지난번에 잰 말 길이를 4박자로 나눠 맞춘다.
+  //  3) 목소리가 꺼져 있거나 안 되면 BEAT 간격으로.
+  // 펼치기는 말이 다 끝난 뒤.
+  const PHRASE = 'Rock, paper, scissors, shoot!';
+  const WORD_AT = [0, 6, 13, 23]; // 각 단어의 글자 위치
+  const BEAT = 400;
+  let speechMs = 1600; // 한 번 말하는 데 걸린 시간 (말할 때마다 다시 잰다)
   function shoot() {
     S.busy = true;
-    Sound.say('Rock, paper, scissors, shoot!');
     const words = ['Rock…', 'Paper…', 'Scissors…', 'Shoot!'];
-    for (const p of [0, 1]) side(p).querySelector('.rps-hand').classList.add('pump');
-    words.forEach((w, i) => later(() => {
-      $('rps-call').textContent = w;
-      if (i < 3) Sound.step();
-    }, i * 520));
-    later(reveal, 3 * 520 + 120);
+    let shown = -1, gotWord = false, started = false, ended = false, t0 = 0;
+    const show = (i) => {
+      if (i <= shown || ended && i < 3) return;
+      shown = i;
+      $('rps-call').textContent = words[i];
+      if (i < 3) {
+        Sound.step();
+        for (const p of [0, 1]) {
+          const h = side(p).querySelector('.rps-hand');
+          h.classList.remove('pump');
+          void h.offsetWidth;
+          h.classList.add('pump');
+        }
+      } else openHands(); // "Shoot!" 하는 순간 고른 손을 펼친다
+    };
+    const finish = () => {
+      if (ended) return;
+      ended = true;
+      show(3);
+      later(reveal, 150);
+    };
+    // 시간으로 박자 맞추기 (단어 알림이 오면 그만둔다)
+    const byTime = (gap, then) => {
+      for (let i = 0; i < 4; i++) later(() => { if (!gotWord) show(i); }, i * gap);
+      if (then) later(then, 3 * gap + gap * 0.6);
+    };
+    const speaking = Sound.speak(PHRASE, {
+      start: () => {
+        if (started) return;
+        started = true;
+        t0 = performance.now();
+        byTime(speechMs / 4.2);
+      },
+      word: (at) => {
+        gotWord = true;
+        let i = 0;
+        while (i < 3 && at >= WORD_AT[i + 1]) i++;
+        show(i);
+      },
+      end: (ok) => {
+        if (ok && started) speechMs = Math.min(3500, Math.max(800, performance.now() - t0));
+        if (!started) return byTime(BEAT, finish); // 말을 못 했으면 정해진 박자로
+        finish();
+      },
+    });
+    if (!speaking) byTime(BEAT, finish);
+    // 끝 알림이 오지 않는 기기를 위한 안전장치
+    later(() => { if (!ended) { show(3); finish(); } }, 4500);
   }
 
-  function reveal() {
-    const [a, b] = S.pick;
+  // 두 사람이 고른 손을 펼친다 (한 판에 한 번)
+  function openHands() {
     for (const p of [0, 1]) {
       const hand = side(p).querySelector('.rps-hand');
+      if (hand.classList.contains('show')) continue;
       hand.classList.remove('pump');
       hand.querySelector('img').src = img(S.pick[p]);
       void hand.offsetWidth;
       hand.classList.add('show');
     }
+  }
+
+  // 누가 이겼는지 (말이 끝난 뒤)
+  function reveal() {
+    const [a, b] = S.pick;
+    openHands();
     const r = RPS.result(a, b);
     const why = RPS.reason(a, b);
     $('rps-why').textContent = why || 'Same hand!';

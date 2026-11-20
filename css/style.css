@@ -569,8 +569,8 @@ button.level-pill { border: none; font-family: inherit; color: var(--ink); curso
 .monster-jar::before { content: ''; position: absolute; top: -10px; left: 14%; right: 14%; height: 18px; border-radius: 8px; background: #B98A5E; }
 .monster-jar b { position: absolute; bottom: 8px; right: 10px; background: #3FB97A; color: #fff; border-radius: 14px; padding: 2px 10px; font-size: 20px; }
 .monster-jar:active { transform: translateY(3px); }
-.monster-plate { position: relative; flex: 1; min-height: min(21vh, 200px); border-radius: 50%; background: radial-gradient(ellipse at center, #fff 55%, #EFE7F7 56%, #fff 70%); box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center; padding: 18px 12%; }
-.monster-plate .items { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; max-width: 100%; }
+.monster-plate { position: relative; flex: 1; min-width: 0; min-height: min(21vh, 200px); border-radius: 50%; background: radial-gradient(ellipse at center, #fff 55%, #EFE7F7 56%, #fff 70%); box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center; padding: 18px 12%; }
+.monster-plate .items { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; flex: none; }
 .monster-plate .item { display: block; }
 .monster-plate .item canvas { display: block; }
 .monster-plate .item.pop canvas { animation: pop 0.25s ease-out; }
@@ -620,7 +620,7 @@ button.level-pill { border: none; font-family: inherit; color: var(--ink); curso
 .rps-board:not(.duo) #rps-top .rps-hand img { transform: rotate(180deg); }
 .rps-hand { height: min(19vh, 190px); aspect-ratio: 1; display: flex; align-items: center; justify-content: center; }
 .rps-hand img { height: 100%; width: auto; display: block; }
-.rps-hand.pump { animation: rps-pump 0.52s ease-in-out 3; }
+.rps-hand.pump { animation: rps-pump 0.38s ease-in-out 1; }
 #rps-top .rps-hand.pump { animation-name: rps-pump-down; }
 .rps-board.duo #rps-top .rps-hand.pump { animation-name: rps-pump; }
 .rps-hand.show { animation: pop 0.35s ease-out; }
@@ -640,3 +640,31 @@ button.level-pill { border: none; font-family: inherit; color: var(--ink); curso
 .rps-mid { flex: none; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 76px; justify-content: center; }
 .rps-call { font-size: clamp(30px, 6vw, 46px); font-weight: 900; color: #E5735A; }
 .rps-why { font-size: 20px; font-weight: 800; color: #8A7A70; }
+
+/* 몬스터 밥 주기: 그림 보기 (5개씩 한 줄) */
+.pic-choice { --icon: 26px; border: none; border-radius: 24px; background: #fff; box-shadow: 0 6px 0 rgba(0, 0, 0, 0.12); padding: 12px; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 4px; width: calc(var(--icon) * 5 + 16px + 24px); min-height: calc(var(--icon) * 2 + 28px); }
+.pic-choice canvas { display: block; }
+.pic-choice:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(0, 0, 0, 0.12); }
+.pic-choice.right { background: #DFF5DA; box-shadow: 0 0 0 5px #7BC67E, 0 6px 0 rgba(0, 0, 0, 0.12); }
+.pic-choice.wrong { opacity: 0.35; }
+#monster-choices { gap: 16px; align-items: stretch; }
+
+.bar-right { display: flex; gap: 10px; flex: none; }
+
+/* 부모 설정: 게임 켜기/끄기 */
+.card.settings { max-height: 88vh; overflow-y: auto; }
+.tile.off { display: none; }
+
+/* 홈 게임 고르기 모드 */
+.edit-bar { position: sticky; top: 8px; z-index: 5; display: none; align-items: center; justify-content: space-between; gap: 12px; width: min(100%, 680px); padding: 10px 12px 10px 18px; border-radius: 20px; background: #3D3355; color: #fff; font-size: 18px; font-weight: 900; }
+.edit-bar button { border: none; border-radius: 999px; padding: 10px 18px; background: #7BC67E; color: #fff; font-size: 18px; font-weight: 900; }
+#screen-home.editing .edit-bar { display: flex; }
+#screen-home.editing .sticker-btn, #screen-home.editing #btn-settings { visibility: hidden; }
+#screen-home.editing .tile { position: relative; }
+#screen-home.editing .tile::after { content: '✓'; position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; border-radius: 50%; background: #fff; color: #3C9A2E; font-size: 20px; font-weight: 900; display: flex; align-items: center; justify-content: center; text-shadow: none; }
+#screen-home.editing .tile.disabled { filter: grayscale(1); opacity: 0.4; }
+#screen-home.editing .tile.disabled::after { content: '✖'; color: #E05C5C; }
+.text-btn.wide { width: 100%; margin-top: 8px; }
+
+.tile .t-name.long { font-size: 17px; white-space: nowrap; }
+@media (max-width: 520px) { .home-group .tile .t-name.long { font-size: 12px; } }

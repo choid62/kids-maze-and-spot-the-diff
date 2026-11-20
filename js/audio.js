@@ -46,11 +46,38 @@
       if (!on()) return;
       [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.12, 0.28, 'triangle', 0.2));
     },
-    say(text) {
-      if (!Store.get('voice')) return;
+    // 말하면서 시작/단어/끝 알림을 받는다 (그림을 목소리에 맞출 때).
+    // h.start(), h.word(글자 위치), h.end(). 목소리가 꺼져 있거나 안 되면 false 를 돌려주고 아무것도 부르지 않는다.
+    speak(text, h) {
+      if (!Store.get('voice')) return false;
       try {
         const s = root.speechSynthesis;
-        if (!s) return;
+        if (!s) return false;
+        s.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'en-US';
+        u.rate = 0.95;
+        u.pitch = 1.3;
+        const voices = s.getVoices();
+        const v = voices.find((x) => x.lang === 'en-US') || voices.find((x) => x.lang && x.lang.toLowerCase().startsWith('en'));
+        if (v) u.voice = v;
+        u.onstart = () => h.start && h.start();
+        u.onboundary = (e) => { if (h.word && (!e.name || e.name === 'word')) h.word(e.charIndex); };
+        u.onend = () => h.end && h.end(true);
+        u.onerror = () => h.end && h.end(false);
+        s.speak(u);
+        return true;
+      } catch (e) { return false; }
+    },
+    // done: 다 말한 뒤 부를 함수 (선택). 목소리가 꺼져 있거나 안 되는 기기에서도 maxMs 뒤에는 꼭 한 번 부른다.
+    say(text, done, maxMs) {
+      let called = false;
+      const finish = () => { if (!called) { called = true; if (done) done(); } };
+      if (done) setTimeout(finish, maxMs || 1500);
+      if (!Store.get('voice')) { if (done) setTimeout(finish, 350); return; }
+      try {
+        const s = root.speechSynthesis;
+        if (!s) { if (done) setTimeout(finish, 350); return; }
         s.cancel();
         const u = new SpeechSynthesisUtterance(text);
         u.lang = 'en-US'; // 영어 음성은 거의 모든 기기에 깔려 있다
@@ -59,8 +86,9 @@
         const voices = s.getVoices();
         const v = voices.find((x) => x.lang === 'en-US') || voices.find((x) => x.lang && x.lang.toLowerCase().startsWith('en'));
         if (v) u.voice = v;
+        if (done) { u.onend = finish; u.onerror = finish; }
         s.speak(u);
-      } catch (e) { /* 음성 미지원 */ }
+      } catch (e) { if (done) setTimeout(finish, 350); }
     },
   };
 })(typeof self !== 'undefined' ? self : this);

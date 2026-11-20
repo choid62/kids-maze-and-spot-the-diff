@@ -28,6 +28,17 @@
     c.addEventListener('pointerup', onUp);
     c.addEventListener('pointercancel', onUp);
     document.getElementById('maze-new').addEventListener('click', () => { Sound.tap(); start({}); });
+    document.getElementById('maze-reset').addEventListener('click', () => { Sound.tap(); reset(); });
+  }
+
+  // 같은 미로에서 지나온 길을 지우고 출발점으로 (잘못 들어갔을 때 처음부터 다시)
+  function reset() {
+    if (!S.maze || S.won) return;
+    S.trail = [{ x: S.maze.start.x, y: S.maze.start.y }];
+    S.pos = { x: S.maze.start.x, y: S.maze.start.y };
+    S.grabbing = false;
+    S.facing = 1;
+    S.nudgeUntil = performance.now() + 1500;
   }
 
   function start(opts) {
@@ -43,7 +54,7 @@
     S.facing = 1;
     S.won = false;
     S.grabbing = false;
-    if (opts.demo === 'solve' || opts.demo === 'win') {
+    if (opts.demo === 'solve' || opts.demo === 'win' || opts.demo === 'reset') {
       const p = Maze.solve(S.maze);
       S.trail = opts.demo === 'win' ? p : p.slice(0, Math.ceil(p.length * 0.6));
     }
@@ -58,6 +69,7 @@
     S.raf = requestAnimationFrame(frame);
     if (opts.demo === 'win') win();
     if (opts.demo === 'drag') setTimeout(autoDrag, 300);
+    if (opts.demo === 'reset') setTimeout(() => document.getElementById('maze-reset').click(), 1200); // 점검용: 가다가 처음으로
   }
 
   // 자가 점검용: 손가락으로 풀이를 따라 끄는 동작을 흉내 낸다 (2칸씩 건너뛰며)

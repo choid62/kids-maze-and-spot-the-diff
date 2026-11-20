@@ -19,6 +19,7 @@
     <section id="screen-home" class="screen">
       <button class="corner-btn" id="btn-settings" aria-label="Parent settings">⚙️</button>
       <h1 class="title">What shall we play?</h1>
+      <div class="edit-bar" id="home-edit-bar"><span>Tap a game to turn it on or off</span><button id="home-edit-done">Done ✓</button></div>
       <div class="home-groups">
         <section class="home-group">
           <h2 class="group-title">👀 Look &amp; Find</h2>
@@ -37,7 +38,7 @@
           </div>
         </section>
         <section class="home-group">
-          <h2 class="group-title">🔢 Numbers <small>add &amp; take away</small></h2>
+          <h2 class="group-title">🔢 Numbers</h2>
           <div class="home-buttons">
             <button class="tile busstop" data-go="bus"><canvas class="btn-art" data-art="bus"></canvas><span class="t-name">Bus Stop</span><small id="home-bus-level"></small></button>
             <button class="tile monster" data-go="monster"><div class="btn-art monster-art" id="monster-art"></div><span class="t-name">Feed Me!</span><small id="home-monster-level"></small></button>
@@ -45,12 +46,12 @@
           </div>
         </section>
         <section class="home-group">
-          <h2 class="group-title">🤖 Play Together <small>vs robot or a friend</small></h2>
+          <h2 class="group-title">🤖 Play Together</h2>
           <div class="home-buttons">
             <button class="tile chop" data-go="chop"><div class="btn-art hands-art" id="chop-art"></div><span class="t-name">Chopsticks</span><small>Finger game</small></button>
             <button class="tile coco" data-go="coco"><canvas class="btn-art" data-art="coco"></canvas><span class="t-name">Coconut</span><small>Crack game</small></button>
             <button class="tile ttt" data-go="ttt"><canvas class="btn-art" data-art="ttt"></canvas><span class="t-name">Tic-Tac-Toe</span><small>Three in a row</small></button>
-            <button class="tile rps" data-go="rps"><div class="btn-art rps-art"><img src="assets/rps/scissors.svg" alt=""><img src="assets/rps/rock.svg" alt=""></div><span class="t-name">Rock Paper Scissors</span><small>First to 3</small></button>
+            <button class="tile rps" data-go="rps"><div class="btn-art rps-art"><img src="assets/rps/scissors.svg" alt=""><img src="assets/rps/rock.svg" alt=""></div><span class="t-name long">Rock Paper Scissors</span><small>First to 3</small></button>
           </div>
         </section>
       </div>
@@ -61,7 +62,7 @@
       <header class="bar">
         <button class="round-btn" data-go="home" aria-label="Home">🏠</button>
         <div class="bar-mid"><button class="level-pill" id="maze-level" data-pick="maze" aria-label="Choose a level"></button></div>
-        <button class="round-btn" id="maze-new" aria-label="New maze">🔄</button>
+        <span class="bar-right"><button class="round-btn" id="maze-reset" aria-label="Back to start">↩️</button><button class="round-btn" id="maze-new" aria-label="New maze">🔄</button></span>
       </header>
       <div class="stage"><canvas id="maze-canvas"></canvas></div>
     </section>
@@ -358,6 +359,8 @@
       <div class="set-row"><span>Spot It level (1–15)</span>
         <span class="stepper"><button data-key="spotLevel" data-step="-1">−</button><b id="set-spotLevel"></b><button data-key="spotLevel" data-step="1">+</button></span></div>
       <div class="set-row"><span>Stickers collected</span><b id="set-count"></b></div>
+      <div class="set-row"><span>Games on the home screen</span><b id="set-games-count"></b></div>
+      <button class="text-btn primary wide" id="set-choose-games">✏️ Choose games on the home screen</button>
       <p class="hint-text">1–3 Easy, 4–6 Medium, 7–8 Hard, 9–10 Very Hard, 11–15 Expert (Spot It only). You can also tap the level at the top of a game to pick one. Mazes go up a level each time one is finished; Spot It goes up when finished without a hint.</p>
       <div class="row">
         <button class="text-btn danger" id="set-reset">Start Over</button>
