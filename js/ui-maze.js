@@ -16,7 +16,11 @@
     active: false, canvas: null, ctx: null, maze: null, theme: null,
     trail: [], pos: { x: 0, y: 0 }, facing: 1, grabbing: false, won: false,
     lastBump: 0, nudgeUntil: 0, L: null, dpr: 1, raf: 0, onWin: null, t0: 0,
+    helpAt: 0, hint: null, hintUntil: 0, helpTimer: 0,
   };
+  // 도움 버튼: 시작하고 30초 뒤에 켜지고, 한 번 쓰면 다시 30초를 기다린다
+  const HELP_WAIT_MS = 30000;
+  const HINT_CELLS = 6;      // 지금 자리에서 몇 칸 앞까지 보여 줄지
 
   function init(onWin) {
     S.onWin = onWin;
@@ -29,6 +33,7 @@
     c.addEventListener('pointercancel', onUp);
     document.getElementById('maze-new').addEventListener('click', () => { Sound.tap(); start({}); });
     document.getElementById('maze-reset').addEventListener('click', () => { Sound.tap(); reset(); });
+    document.getElementById('maze-help').addEventListener('click', help);
   }
 
   // 같은 미로에서 지나온 길을 지우고 출발점으로 (잘못 들어갔을 때 처음부터 다시)
@@ -58,6 +63,7 @@
       const p = Maze.solve(S.maze);
       S.trail = opts.demo === 'win' ? p : p.slice(0, Math.ceil(p.length * 0.6));
     }
+    if (opts.demo === 'helpfork') S.trail = wrongBranch(); // 점검용: 잘못 들어간 가지에서 도움
     const end = S.trail[S.trail.length - 1];
     S.pos = { x: end.x, y: end.y };
     S.t0 = performance.now();
@@ -65,11 +71,41 @@
     document.getElementById('maze-level').textContent = `Level ${level} · ${Core.levelName(level)} ▾`;
     relayout();
     S.active = true;
+    S.hint = null;
+    S.helpAt = performance.now() + (opts.demo === 'help' || opts.demo === 'helpfork' ? 0 : HELP_WAIT_MS);
+    clearInterval(S.helpTimer);
+    S.helpTimer = setInterval(helpButton, 250);
+    helpButton();
     cancelAnimationFrame(S.raf);
     S.raf = requestAnimationFrame(frame);
     if (opts.demo === 'win') win();
     if (opts.demo === 'drag') setTimeout(autoDrag, 300);
+    if (opts.demo === 'help' || opts.demo === 'helpfork') setTimeout(() => document.getElementById('maze-help').click(), 500); // 점검용: 도움 바로 쓰기
     if (opts.demo === 'reset') setTimeout(() => document.getElementById('maze-reset').click(), 1200); // 점검용: 가다가 처음으로
+  }
+
+  // 자가 점검용: 맞는 길을 반쯤 가다가 옆 가지로 몇 칸 들어간 길
+  function wrongBranch() {
+    const sol = Maze.solve(S.maze);
+    const on = new Set(sol.map((c) => c.x + ',' + c.y));
+    const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+    for (let i = Math.floor(sol.length / 3); i < sol.length - 1; i++) {
+      for (const [dx, dy] of dirs) {
+        const c = sol[i];
+        if (!Maze.canMove(S.maze, c.x, c.y, dx, dy) || on.has((c.x + dx) + ',' + (c.y + dy))) continue;
+        const trail = sol.slice(0, i + 1);
+        let cur = { x: c.x + dx, y: c.y + dy };
+        const seen = new Set(on);
+        for (let k = 0; k < 4 && cur; k++) {
+          trail.push(cur);
+          seen.add(cur.x + ',' + cur.y);
+          const nx = dirs.map(([ax, ay]) => ({ x: cur.x + ax, y: cur.y + ay, ok: Maze.canMove(S.maze, cur.x, cur.y, ax, ay) })).find((n) => n.ok && !seen.has(n.x + ',' + n.y));
+          cur = nx ? { x: nx.x, y: nx.y } : null;
+        }
+        return trail;
+      }
+    }
+    return sol.slice(0, 1);
   }
 
   // 자가 점검용: 손가락으로 풀이를 따라 끄는 동작을 흉내 낸다 (2칸씩 건너뛰며)
@@ -87,6 +123,7 @@
 
   function stop() {
     S.active = false;
+    clearInterval(S.helpTimer);
     cancelAnimationFrame(S.raf);
   }
 
@@ -104,6 +141,28 @@
       ox: Math.round((box.width - cell * cols) / 2),
       oy: Math.round((box.height - cell * rows) / 2),
     };
+  }
+
+  // 도움 버튼 모양: 기다리는 동안 흐리게
+  function helpButton() {
+    document.getElementById('maze-help').disabled = S.won || performance.now() < S.helpAt;
+  }
+
+  // 갈 길을 빨갛게 보여 준다. 잘못 들어간 가지에 있으면, 갈라진 곳에서 안 가 본 맞는 길을 보여 준다
+  // (지나온 길은 되돌아가면 지워지므로 늘 출발점에서 지금 자리까지의 한 줄 길이다)
+  function help() {
+    if (!S.active || S.won || performance.now() < S.helpAt) return;
+    Sound.unlock();
+    Sound.tap();
+    const cur = S.trail[S.trail.length - 1];
+    const path = Maze.pathBetween(S.maze, cur, S.maze.goal);
+    const onTrail = new Set(S.trail.map((c) => c.x + ',' + c.y));
+    let j = 0; // 갈라진 곳: 목표로 가는 길 중 지나온 길 위의 마지막 칸
+    while (j + 1 < path.length && onTrail.has(path[j + 1].x + ',' + path[j + 1].y)) j++;
+    S.hintFork = j > 0;
+    S.hint = path.slice(j, j + HINT_CELLS + 1);
+    S.helpAt = performance.now() + HELP_WAIT_MS;
+    helpButton();
   }
 
   const center = (c) => ({ x: S.L.ox + (c.x + 0.5) * S.L.cell, y: S.L.oy + (c.y + 0.5) * S.L.cell });
@@ -141,6 +200,9 @@
       });
       ctx.stroke();
     }
+
+    // 도움: 갈 방향 (빨간 점선 + 화살표, 지나갈 때까지)
+    if (S.hint && S.hint.length > 1) drawHint(now);
 
     // 벽
     ctx.strokeStyle = theme.wall;
@@ -235,6 +297,52 @@
     }
   }
 
+  function drawHint(now) {
+    const { ctx } = S;
+    const cell = S.L.cell;
+    ctx.save();
+    ctx.globalAlpha = 0.75 + 0.25 * Math.sin(now / 180);
+    ctx.strokeStyle = '#F03A3A';
+    ctx.lineWidth = cell * 0.2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.setLineDash([cell * 0.3, cell * 0.28]);
+    ctx.lineDashOffset = -now / 25;
+    ctx.beginPath();
+    S.hint.forEach((c, i) => { const p = center(c); if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+    ctx.stroke();
+    // 잘못 들어간 가지면 갈라진 곳에 빨간 동그라미
+    if (S.hintFork) {
+      const f = center(S.hint[0]);
+      ctx.setLineDash([]);
+      ctx.lineWidth = cell * 0.1;
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, cell * (0.36 + 0.04 * Math.sin(now / 150)), 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    // 끝에 화살표
+    const a = center(S.hint[S.hint.length - 2]), b = center(S.hint[S.hint.length - 1]);
+    const ang = Math.atan2(b.y - a.y, b.x - a.x), r = cell * 0.32;
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#F03A3A';
+    ctx.beginPath();
+    ctx.moveTo(b.x + Math.cos(ang) * r, b.y + Math.sin(ang) * r);
+    ctx.lineTo(b.x + Math.cos(ang + 2.5) * r, b.y + Math.sin(ang + 2.5) * r);
+    ctx.lineTo(b.x + Math.cos(ang - 2.5) * r, b.y + Math.sin(ang - 2.5) * r);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // 빨간 길은 지나간 만큼 줄어들고, 끝까지 지나가면 사라진다 (잘못 간 가지에서 돌아오는 동안은 그대로)
+  function passHint(c) {
+    if (!S.hint) return;
+    const k = S.hint.findIndex((h) => h.x === c.x && h.y === c.y);
+    if (k <= 0) return;
+    S.hint = S.hint.slice(k);
+    S.hintFork = false;
+    if (S.hint.length <= 1) S.hint = null;
+  }
+
   function step(d, seen) {
     const cur = S.trail[S.trail.length - 1];
     if (!Maze.canMove(S.maze, cur.x, cur.y, d[0], d[1])) return false;
@@ -244,6 +352,7 @@
     if (prev && prev.x === next.x && prev.y === next.y) S.trail.pop(); // 되돌아가면 길을 지운다
     else S.trail.push(next);
     if (d[0]) S.facing = d[0];
+    passHint(next);
     Sound.step();
     if (next.x === S.maze.goal.x && next.y === S.maze.goal.y) win();
     return true;

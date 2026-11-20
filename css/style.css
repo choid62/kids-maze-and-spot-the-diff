@@ -746,3 +746,7 @@ button.level-pill { border: none; font-family: inherit; color: var(--ink); curso
 .gm-choice .gm-ico > img, .gm-choice .gm-ico > svg { width: 100%; height: 100%; display: block; }
 .gm-choice .gm-ico .gm-seed { width: 55%; height: 80%; }
 #screen-gmath.speaking .gm-choice { opacity: 0.55; }
+
+/* 미로 도움 버튼: 기다리는 동안 흐리게 */
+.maze-help { position: relative; }
+.maze-help:disabled { opacity: 0.45; filter: grayscale(0.8); }
